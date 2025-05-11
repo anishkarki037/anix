@@ -46,7 +46,7 @@ Anix is designed for developers who want to build web applications quickly, with
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url> <your-project-name>
+   git clone https://github.com/anishkarki037/anix.git <your-project-name>
    cd anix-project
    ```
 2. **Install dependencies:**

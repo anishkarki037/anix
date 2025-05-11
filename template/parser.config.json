@@ -1,0 +1,7 @@
+{
+  "entry": "main.anix",
+  "output": "dist/",
+  "strictMode": true,
+  "plugins": [],
+  "description": "Sample parser configuration for Anix projects. Adjust as needed."
+}

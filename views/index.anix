@@ -1,0 +1,29 @@
+page ["Home", "/"] {
+  div.d-flex.flex-col.jc-center.ai-center.h-screen.gap-8.bg-dark.txt-mono {
+    div.logo.animate-fade{
+  img>src="./assets/img/anix.png", alt="Anix Logo"<
+    }
+   div.buttons.fs-lg{
+      a.btn.btn-secondary.frosted.clr-white "Github" -> "#";
+     a.btn.btn-primary "See Docs" -> "#";
+   }
+     div.u-text.txt-center{
+      span.clr-light"Start building by editing"
+      span.clr-primary"views/index.anix"
+     p.clr-light "assets should be handled in views/assets"
+     }
+      div.u-text.txt-center{
+      span.clr-light "Use" 
+      span.clr-primary "npm start" 
+      span.clr-light"to run development server" 
+      br
+      span.clr-light "Use"
+      span.clr-primary "npm run build" 
+      span.clr-light"to build for production"
+     }
+   
+  }
+ 
+}
+
+

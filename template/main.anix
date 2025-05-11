@@ -1,0 +1,16 @@
+// main.anix - Sample Anix source file
+// Welcome to your first Anix project!
+
+component App {
+    state count = 0
+
+    render() {
+        <div>
+            <h1>Hello, Anix!</h1>
+            <p>Count: {count}</p>
+            <button onclick={count++}>Increment</button>
+        </div>
+    }
+}
+
+// Edit this file to start building your app.

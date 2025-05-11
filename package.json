@@ -1,0 +1,20 @@
+{
+  "name": "anix",
+  "version": "1.0.0",
+  "description": "Anix SPA Compiler",
+  "main": "src/compiler.js",
+  "scripts": {
+    "build": "node src/compiler.js",
+    "dev": "node src/dev-server.js",
+    "start": "node src/dev-server.js",
+    "server": "node backend/astpoint-server.js",
+    "ast-gui": "node backend/server.js"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

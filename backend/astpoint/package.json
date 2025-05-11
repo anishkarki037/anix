@@ -1,0 +1,19 @@
+{
+  "name": "astpoint",
+  "version": "1.0.0",
+  "description": "A lightweight document database using AST format",
+  "main": "astpoint-cli.js",
+  "type": "module",
+  "scripts": {
+    "ast": "node astpoint-cli.js",
+    "test": "node test.js",
+    "gui": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "bin": {
+    "astpoint": "./astpoint-cli.js"
+  }
+}

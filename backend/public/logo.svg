@@ -1,0 +1,29 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Database Icon Background -->
+  <rect x="20" y="30" width="60" height="45" rx="5" fill="#4a6cf7" />
+  
+  <!-- Database Icon Highlights -->
+  <rect x="20" y="30" width="60" height="15" rx="5" fill="#3b56d4" />
+  <rect x="20" y="60" width="60" height="15" rx="5" fill="#3b56d4" />
+  
+  <!-- Database Lines -->
+  <line x1="30" y1="38" x2="70" y2="38" stroke="white" stroke-width="2" />
+  <line x1="30" y1="52" x2="70" y2="52" stroke="white" stroke-width="2" />
+  <line x1="30" y1="67" x2="70" y2="67" stroke="white" stroke-width="2" />
+  
+  <!-- Data Dots -->
+  <circle cx="35" cy="38" r="2" fill="white" />
+  <circle cx="45" cy="38" r="2" fill="white" />
+  <circle cx="55" cy="38" r="2" fill="white" />
+  
+  <circle cx="35" cy="52" r="2" fill="white" />
+  <circle cx="45" cy="52" r="2" fill="white" />
+  <circle cx="65" cy="52" r="2" fill="white" />
+  
+  <circle cx="40" cy="67" r="2" fill="white" />
+  <circle cx="50" cy="67" r="2" fill="white" />
+  <circle cx="60" cy="67" r="2" fill="white" />
+  
+  <!-- Astpoint Star -->
+  <polygon points="50,15 55,25 65,27 58,35 60,45 50,40 40,45 42,35 35,27 45,25" fill="#6e8afa" stroke="#4a6cf7" stroke-width="1" />
+</svg>

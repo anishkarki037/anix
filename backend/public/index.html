@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Astpoint DB - Web Interface</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="ast.png" alt="Astpoint DB Logo" />
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <button id="btnNewDb">
+              <i class="fas fa-plus"></i> New Database
+            </button>
+          </li>
+          <li>
+            <button id="btnRefresh"><i class="fas fa-sync"></i> Refresh</button>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="sidebar">
+          <h2>Databases</h2>
+          <div class="database-list" id="databaseList">
+            <!-- Databases will be loaded here -->
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="welcome-screen" id="welcomeScreen">
+            <h2>Welcome to Astpoint DB</h2>
+            <p>
+              Select a database from the sidebar or create a new one to get
+              started.
+            </p>
+            <div class="welcome-actions">
+              <button id="btnCreateFirstDb">
+                <i class="fas fa-plus"></i> Create First Database
+              </button>
+            </div>
+          </div>
+
+          <div class="database-view hidden" id="databaseView">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="tables">Tables</button>
+              <button class="tab-btn" data-tab="query">Query</button>
+              <button class="tab-btn" data-tab="info">Database Info</button>
+            </div>
+
+            <div class="tab-content active" id="tablesTab">
+              <div class="tab-header">
+                <h2>Tables in <span id="currentDbName"></span></h2>
+                <button id="btnNewTable">
+                  <i class="fas fa-plus"></i> New Table
+                </button>
+              </div>
+              <div class="table-list" id="tableList">
+                <!-- Tables will be loaded here -->
+              </div>
+            </div>
+
+            <div class="tab-content" id="queryTab">
+              <div class="tab-header">
+                <h2>Execute Query</h2>
+                <button id="btnRunQuery">
+                  <i class="fas fa-play"></i> Run
+                </button>
+              </div>
+              <div class="query-editor">
+                <textarea
+                  id="queryInput"
+                  placeholder="Enter your query here...
+First USE ast file by Command 'USE path/to/your/database.ast'
+Examples:
+- LIST TABLES
+- FIND FROM tableName
+- FIND FROM tableName WHERE field = 'value'
+- INSERT INTO tableName
+  { field1: 'value1', field2: 'value2' }
+"
+                ></textarea>
+              </div>
+              <div class="query-results" id="queryResults">
+                <div class="results-placeholder">
+                  Query results will appear here
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="infoTab">
+              <div class="tab-header">
+                <h2>Database Information</h2>
+              </div>
+              <div class="info-content" id="dbInfo">
+                <!-- Database info will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="table-view hidden" id="tableView">
+            <div class="view-header">
+              <button class="back-btn" id="backToDbBtn">
+                <i class="fas fa-arrow-left"></i> Back to Tables
+              </button>
+              <h2>Table: <span id="currentTableName"></span></h2>
+              <div class="view-actions">
+                <button id="btnNewRecord">
+                  <i class="fas fa-plus"></i> New Record
+                </button>
+                <button id="btnDeleteTable">
+                  <i class="fas fa-trash"></i> Delete Table
+                </button>
+              </div>
+            </div>
+
+            <div class="records-container">
+              <div class="records-header">
+                <h3>Records</h3>
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="recordSearch"
+                    placeholder="Search records..."
+                  />
+                  <button id="btnSearch"><i class="fas fa-search"></i></button>
+                </div>
+              </div>
+
+              <div class="records-table-container">
+                <table class="records-table" id="recordsTable">
+                  <thead>
+                    <!-- Table header will be generated dynamically -->
+                  </thead>
+                  <tbody>
+                    <!-- Records will be loaded here -->
+                  </tbody>
+                </table>
+                <div class="no-records hidden" id="noRecords">
+                  No records found
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay hidden" id="modalOverlay"></div>
+
+    <!-- New Database Modal -->
+    <div class="modal hidden" id="newDbModal">
+      <div class="modal-header">
+        <h3>Create New Database</h3>
+        <button class="close-modal" data-modal="newDbModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="newDbName">Database Name</label>
+          <input type="text" id="newDbName" placeholder="Enter database name" />
+          <small
+            >The .ast extension will be added automatically if not
+            provided</small
+          >
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-modal="newDbModal">Cancel</button>
+        <button class="btn-primary" id="createDbBtn">Create Database</button>
+      </div>
+    </div>
+
+    <!-- New Table Modal -->
+    <div class="modal hidden" id="newTableModal">
+      <div class="modal-header">
+        <h3>Create New Table</h3>
+        <button class="close-modal" data-modal="newTableModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="newTableName">Table Name</label>
+          <input type="text" id="newTableName" placeholder="Enter table name" />
+        </div>
+        <div class="form-group">
+          <label for="initialRecord">Initial Record (JSON)</label>
+          <textarea
+            id="initialRecord"
+            placeholder='{\n  "field1": "value1",\n  "field2": "value2"\n}'
+          ></textarea>
+          <small>At least one record is required to create a table</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-modal="newTableModal">Cancel</button>
+        <button class="btn-primary" id="createTableBtn">Create Table</button>
+      </div>
+    </div>
+
+    <!-- New Record Modal -->
+    <div class="modal hidden" id="newRecordModal">
+      <div class="modal-header">
+        <h3>Add New Record</h3>
+        <button class="close-modal" data-modal="newRecordModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="newRecordData">Record Data (JSON)</label>
+          <textarea
+            id="newRecordData"
+            placeholder='{\n  "field1": "value1",\n  "field2": "value2"\n}'
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-modal="newRecordModal">Cancel</button>
+        <button class="btn-primary" id="addRecordBtn">Add Record</button>
+      </div>
+    </div>
+
+    <!-- Edit Record Modal -->
+    <div class="modal hidden" id="editRecordModal">
+      <div class="modal-header">
+        <h3>Edit Record</h3>
+        <button class="close-modal" data-modal="editRecordModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="editRecordData">Record Data (JSON)</label>
+          <textarea id="editRecordData"></textarea>
+          <input type="hidden" id="editRecordIndex" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-modal="editRecordModal">Cancel</button>
+        <button class="btn-danger" id="deleteRecordBtn">Delete Record</button>
+        <button class="btn-primary" id="updateRecordBtn">Update Record</button>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal hidden" id="confirmModal">
+      <div class="modal-header">
+        <h3 id="confirmTitle">Confirm Action</h3>
+        <button class="close-modal" data-modal="confirmModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <p id="confirmMessage">Are you sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" data-modal="confirmModal">Cancel</button>
+        <button class="btn-danger" id="confirmBtn">Confirm</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Astpoint DB Web GUI &copy; 2025</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,18 +1,18 @@
 page ["Home", "/"] {
   div.d-flex.flex-col.jc-center.ai-center.h-screen.gap-8.bg-dark.txt-mono {
     div.logo.animate-jello{
-  img>src="./assets/img/anix.png", alt="Anix Logo"<
+  img(src="./assets/img/Anix.svg", alt="Anix Logo",w:800px);
     }
    div.buttons.fs-lg{
       a.btn.btn-secondary.frosted.clr-white.hover-jello "Github" -> "https://github.com/anishkarki037/anix";
      a.btn.btn-primary.hover-jello "See Docs" -> "#";
    }
-     div.u-text.txt-center{
+     div.u-text.txt-center.animate-flip-y{
       span.clr-light"Start building by editing"
       span.clr-primary"views/index.anix"
      p.clr-light "assets should be handled in views/assets"
      }
-      div.u-text.txt-center{
+      div.u-text.txt-center.animate-flip-y{
       span.clr-light "Use" 
       span.clr-primary "npm start" 
       span.clr-light"to run development server" 
@@ -21,9 +21,14 @@ page ["Home", "/"] {
       span.clr-primary "npm run build" 
       span.clr-light"to build for production"
      }
+     div{
+    span.clr-light"Use prebuilt assets like shorthand Css and JS templates from" 
+     span.clr-primary"views/asserts"
+     }
+   
+
    
   }
- 
 }
 
 

@@ -1,0 +1,377 @@
+// Install thecode snippets in your VSCode snippets directory
+// File: anix.code-snippets
+// step1: open command palette (Ctrl+Shift+P)
+// step2: type "snippets" and select "Preferences: Configure User Snippets"
+// step3: select "New Global Snippets file"
+// step4: name the file "anix.code-snippets"
+// step5: copy the code below and paste it into the file
+// step6: save the file
+
+{
+  "Page Declaration": {
+    "prefix": "page",
+    "body": ["page[\"${1:title}\", \"${2:url}\"] {", "\t$0", "}"],
+    "description": "Create a new page with title and URL"
+  },
+  "Include File": {
+    "prefix": "include",
+    "body": "include \"${1:filename.anix}\";",
+    "description": "Include another Anix file"
+  },
+  "Import JS": {
+    "prefix": "importjs",
+    "body": "importjs ${1:path/module}: ${2:functionName}(${3:arguments});",
+    "description": "Import and invoke a JS module function"
+  },
+  "Template Directive": {
+    "prefix": "template",
+    "body": "{{ ${1:functionName} }}",
+    "description": "Insert a template directive"
+  },
+  "Div Block": {
+    "prefix": "div",
+    "body": ["div${1:.${2:class}}${3:(${4:attributes})} {", "\t$0", "}"],
+    "description": "Create a div block"
+  },
+  "Div with ID and Classes": {
+    "prefix": "div#",
+    "body": "div#${1:id}${2:.${3:class}} ${4:(${5:attributes})} {$0}",
+    "description": "Create a div with ID and classes"
+  },
+  "Tag with Content": {
+    "prefix": "tag",
+    "body": "${1:tag}${2:(${3:attributes})} \"${4:content}\"",
+    "description": "Create a tag with content"
+  },
+  "Tag with ID and Classes": {
+    "prefix": "tag#",
+    "body": "${1:tag}#${2:id}${3:.${4:class}} ${5:(${6:attributes})} {$0}",
+    "description": "Create a tag with ID and classes"
+  },
+  "Link": {
+    "prefix": "a",
+    "body": "a${1:.${2:class}} \"${3:text}\" -> \"${4:url}\";",
+    "description": "Create a link"
+  },
+  "Image": {
+    "prefix": "img",
+    "body": "img(src=\"${1:path}\", alt=\"${2:description}\")",
+    "description": "Create an image tag"
+  },
+  "Input": {
+    "prefix": "input",
+    "body": "input(type=\"${1:text}\", name=\"${2:name}\"${3:, placeholder=\"${4:placeholder}\"});",
+    "description": "Create an input field"
+  },
+  "Button": {
+    "prefix": "button",
+    "body": "button${1:.${2:class}} \"${3:text}\"",
+    "description": "Create a button"
+  },
+  "Form": {
+    "prefix": "form",
+    "body": ["form(action=\"${1:url}\", method=\"${2:post}\") {", "\t$0", "}"],
+    "description": "Create a form"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": ["script {", "\t$0", "}"],
+    "description": "Create a script block"
+  },
+  "Script with Source": {
+    "prefix": "scripts",
+    "body": "script(src=\"${1:path/to/script.js}\")",
+    "description": "Create a script tag with source"
+  },
+  "Inline Script": {
+    "prefix": "scriptl",
+    "body": "script: ${1:console.log('$2')};",
+    "description": "Create an inline script"
+  },
+  "JS Click": {
+    "prefix": "js:click",
+    "body": ["js:click('${1:selector}') {", "\t$0", "}"],
+    "description": "Add click event handler"
+  },
+  "JS Hover": {
+    "prefix": "js:hover",
+    "body": ["js:hover('${1:selector}') {", "\t$0", "}"],
+    "description": "Add hover event handler"
+  },
+  "JS Leave": {
+    "prefix": "js:leave",
+    "body": ["js:leave('${1:selector}') {", "\t$0", "}"],
+    "description": "Add mouseout event handler"
+  },
+  "JS Submit": {
+    "prefix": "js:submit",
+    "body": [
+      "js:submit('${1:selector}') {",
+      "\tevent.preventDefault();",
+      "\t$0",
+      "}"
+    ],
+    "description": "Add form submit event handler"
+  },
+  "JS Change": {
+    "prefix": "js:change",
+    "body": ["js:change('${1:selector}') {", "\t$0", "}"],
+    "description": "Add change event handler"
+  },
+  "JS Keyup": {
+    "prefix": "js:keyup",
+    "body": ["js:keyup('${1:selector}') {", "\t$0", "}"],
+    "description": "Add keyup event handler"
+  },
+  "JS Load": {
+    "prefix": "js:load",
+    "body": ["js:load('${1:selector}') {", "\t$0", "}"],
+    "description": "Add DOMContentLoaded event handler"
+  },
+  "JS Ajax": {
+    "prefix": "js:ajax",
+    "body": [
+      "js:ajax('${1:url}') {",
+      "\tmethod: '${2:GET}',",
+      "\theaders: {",
+      "\t\t'Content-Type': 'application/json'",
+      "\t},",
+      "\tbody: JSON.stringify({",
+      "\t\t$0",
+      "\t})",
+      "}"
+    ],
+    "description": "Create fetch request"
+  },
+  "JS Get Element": {
+    "prefix": "js:get",
+    "body": "js:get('${1:selector}') {$0}",
+    "description": "Get DOM element"
+  },
+  "JS Get All Elements": {
+    "prefix": "js:getAll",
+    "body": "js:getAll('${1:selector}') {$0}",
+    "description": "Get all matching DOM elements"
+  },
+  "JS Toggle Class": {
+    "prefix": "js:toggle",
+    "body": "js:toggle('${1:selector}', '${2:className}')",
+    "description": "Toggle class on element"
+  },
+  "JS Add Class": {
+    "prefix": "js:addClass",
+    "body": "js:addClass('${1:selector}', '${2:className}')",
+    "description": "Add class to element"
+  },
+  "JS Remove Class": {
+    "prefix": "js:removeClass",
+    "body": "js:removeClass('${1:selector}', '${2:className}')",
+    "description": "Remove class from element"
+  },
+  "JS Wait": {
+    "prefix": "js:wait",
+    "body": ["js:wait(${1:1000}) {", "\t$0", "}"],
+    "description": "Create timeout"
+  },
+  "Header": {
+    "prefix": "header",
+    "body": ["header${1:.${2:class}} {", "\t$0", "}"],
+    "description": "Create a header section"
+  },
+  "Main": {
+    "prefix": "main",
+    "body": ["main${1:.${2:class}} {", "\t$0", "}"],
+    "description": "Create a main section"
+  },
+  "Footer": {
+    "prefix": "footer",
+    "body": ["footer${1:.${2:class}} {", "\t$0", "}"],
+    "description": "Create a footer section"
+  },
+  "Section": {
+    "prefix": "section",
+    "body": ["section${1:#${2:id}}${3:.${4:class}} {", "\t$0", "}"],
+    "description": "Create a section"
+  },
+  "Nav": {
+    "prefix": "nav",
+    "body": ["nav${1:.${2:class}} {", "\t$0", "}"],
+    "description": "Create a navigation section"
+  },
+  "Unordered List": {
+    "prefix": "ul",
+    "body": [
+      "ul${1:.${2:class}} {",
+      "\tli \"${3:Item 1}\"",
+      "\tli \"${4:Item 2}\"",
+      "\tli \"${5:Item 3}\"$0",
+      "}"
+    ],
+    "description": "Create an unordered list"
+  },
+  "Ordered List": {
+    "prefix": "ol",
+    "body": [
+      "ol${1:.${2:class}} {",
+      "\tli \"${3:Item 1}\"",
+      "\tli \"${4:Item 2}\"",
+      "\tli \"${5:Item 3}\"$0",
+      "}"
+    ],
+    "description": "Create an ordered list"
+  },
+  "Table": {
+    "prefix": "table",
+    "body": [
+      "table${1:.${2:class}} {",
+      "\tthead {",
+      "\t\ttr {",
+      "\t\t\tth \"${3:Header 1}\"",
+      "\t\t\tth \"${4:Header 2}\"",
+      "\t\t\tth \"${5:Header 3}\"",
+      "\t\t}",
+      "\t}",
+      "\ttbody {",
+      "\t\ttr {",
+      "\t\t\ttd \"${6:Data 1}\"",
+      "\t\t\ttd \"${7:Data 2}\"",
+      "\t\t\ttd \"${8:Data 3}\"",
+      "\t\t}$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a table"
+  },
+  "Form with Input": {
+    "prefix": "formfull",
+    "body": [
+      "form(action=\"${1:url}\", method=\"${2:post}\") {",
+      "\tdiv.form-group {",
+      "\t\tlabel(for=\"${3:inputId}\") \"${4:Label}\"",
+      "\t\tinput(type=\"${5:text}\", id=\"${3:inputId}\", name=\"${6:inputName}\", placeholder=\"${7:Enter text}\")",
+      "\t}",
+      "\tbutton(type=\"submit\") \"${8:Submit}\"$0",
+      "}"
+    ],
+    "description": "Create a complete form with input"
+  },
+  "Comments Single Line": {
+    "prefix": "//",
+    "body": "// ${1:comment}",
+    "description": "Add a single line comment"
+  },
+  "Comments Hash": {
+    "prefix": "#",
+    "body": "# ${1:comment}",
+    "description": "Add a hash comment"
+  },
+  "Comments Triple Hash": {
+    "prefix": "###",
+    "body": "### ${1:comment}",
+    "description": "Add a triple hash comment"
+  },
+  "Responsive Container": {
+    "prefix": "container",
+    "body": [
+      "div.container {",
+      "\tdiv.row {",
+      "\t\tdiv.col {",
+      "\t\t\t$0",
+      "\t\t}",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a responsive container"
+  },
+  "Flexbox Container": {
+    "prefix": "flex",
+    "body": [
+      "div.flex-container(style=\"display: flex; justify-content: ${1:center}; align-items: ${2:center}\") {",
+      "\tdiv.flex-item {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a flexbox container"
+  },
+  "Grid Container": {
+    "prefix": "grid",
+    "body": [
+      "div.grid-container(style=\"display: grid; grid-template-columns: ${1:repeat(3, 1fr)}; gap: ${2:10px}\") {",
+      "\tdiv.grid-item {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a CSS grid container"
+  },
+  "Media Query": {
+    "prefix": "media",
+    "body": [
+      "script {",
+      "\tconst mediaQuery = window.matchMedia('(max-width: ${1:768px})');",
+      "\tconst handleMediaChange = (e) => {",
+      "\t\tif (e.matches) {",
+      "\t\t\t$0",
+      "\t\t} else {",
+      "\t\t\t",
+      "\t\t}",
+      "\t};",
+      "\tmediaQuery.addEventListener('change', handleMediaChange);",
+      "\thandleMediaChange(mediaQuery);",
+      "}"
+    ],
+    "description": "Create a media query handler"
+  },
+  "Dark Mode Toggle": {
+    "prefix": "darkmode",
+    "body": [
+      "button#darkModeToggle \"Toggle Dark Mode\"",
+      "",
+      "js:click('#darkModeToggle') {",
+      "\tdocument.body.classList.toggle('dark-mode');",
+      "\tlocalStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));",
+      "}",
+      "",
+      "script {",
+      "\tif (localStorage.getItem('darkMode') === 'true') {",
+      "\t\tdocument.body.classList.add('dark-mode');",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a dark mode toggle with local storage"
+  },
+  "Modal Dialog": {
+    "prefix": "modal",
+    "body": [
+      "// Modal Trigger",
+      "button#openModal.btn \"${1:Open Modal}\"",
+      "",
+      "// Modal Container",
+      "div#modal.modal(style=\"display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000;\") {",
+      "\tdiv.modal-content(style=\"background: white; margin: 15% auto; padding: 20px; width: 70%; border-radius: 5px;\") {",
+      "\t\tspan#closeModal.close(style=\"float: right; cursor: pointer; font-size: 28px;\") \"&times;\"",
+      "\t\th2 \"${2:Modal Title}\"",
+      "\t\tp \"${3:Modal content goes here...}\"",
+      "\t\t$0",
+      "\t}",
+      "}",
+      "",
+      "// Modal Scripts",
+      "js:click('#openModal') {",
+      "\tdocument.getElementById('modal').style.display = 'block';",
+      "}",
+      "",
+      "js:click('#closeModal') {",
+      "\tdocument.getElementById('modal').style.display = 'none';",
+      "}",
+      "",
+      "js:click('#modal') {",
+      "\tif (event.target === this) {",
+      "\t\tthis.style.display = 'none';",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a modal dialog"
+  }
+}

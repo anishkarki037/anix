@@ -58,6 +58,25 @@ Anix is designed for developers who want to build web applications quickly, with
    ```
 4. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000) (or your configured port).
+5. **Install Anix Extension:**
+   Install the Anix extension in your code editor to get syntax highlighting and auto-completion for .anix files.
+   To install the extension:
+
+- For VS Code: Open the Extensions panel
+- Go to three dot menu in top right of extenstion panel
+- Select install from VSIX,Locate the anix.vsix extension in root folder of your anix project and click Install
+
+6. **Snippets:**
+
+- Install thecode snippets in your VSCode snippets directory
+- File: anix.code-snippets
+- step1: open command palette (Ctrl+Shift+P)
+- step2: type "snippets" and select "Preferences: Configure
+- User Snippets"=
+- step3: select "New Global Snippets file"
+- step4: name the file "anix.code-snippets"
+- step5: copy the code from "anix.code-snippets" file in root directory of your anix project and paste it into the new file
+- step6: save the file
 
 ---
 
@@ -72,6 +91,8 @@ Anix is designed for developers who want to build web applications quickly, with
 ├── backend/           # Astpoint powered backend
 ├── package.json      # Project metadata and dependencies
 └── README.md         # Project documentation
+└── anix.code-snippets # Code snippets for VSCode
+└── anix.vsix           # Anix extension for VSCode
 ```
 
 ---

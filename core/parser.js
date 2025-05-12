@@ -67,6 +67,65 @@ class AnixParser {
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
 
+      // Detect pre block with opening brace
+      if (line.startsWith("pre") && line.endsWith("{")) {
+        const preTagMatch = line.match(/^pre((?:[.#][\w-]+)*)\s*\{$/);
+        if (preTagMatch) {
+          const tagMods = preTagMatch[1];
+          let classList = [];
+          let idAttr = "";
+
+          tagMods.split(/(?=[.#])/).forEach((part) => {
+            if (part.startsWith(".")) classList.push(part.slice(1));
+            else if (part.startsWith("#")) idAttr = part.slice(1);
+          });
+
+          let attrs = "";
+          if (classList.length) attrs += ` class="${classList.join(" ")}"`;
+          if (idAttr) attrs += ` id="${idAttr}"`;
+
+          let preContent = "";
+          i++; // move to next line
+
+          // Collect lines until closing brace
+          while (i < lines.length && lines[i].trim() !== "}") {
+            preContent += lines[i].replace(/\\n/g, "\n") + "\n";
+
+            i++;
+          }
+
+          // Escape HTML entities
+          const escaped = preContent
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+          html += `<pre${attrs}>${escaped.trim()}</pre>\n`;
+          continue;
+        }
+      }
+      // Handle generic multiline script block
+      if (line.startsWith("script {")) {
+        let scriptBlock = "";
+        let openBraces = 1;
+        i++;
+
+        while (i < lines.length && openBraces > 0) {
+          const l = lines[i];
+          openBraces += (l.match(/{/g) || []).length;
+          openBraces -= (l.match(/}/g) || []).length;
+
+          if (openBraces > 0) scriptBlock += l + "\n";
+          i++;
+        }
+
+        html += `<script>\n${scriptBlock.trim()}\n</script>\n`;
+        i--; // backtrack since loop will increment again
+        continue;
+      }
+
       // Handle multiline JS commands
       if (insideJsCommand) {
         // Count opening and closing braces to handle nested structures
@@ -326,6 +385,40 @@ class AnixParser {
   }
 
   parseLine(line) {
+    // Detect pre tag for raw text rendering
+    const preTagMatch = line.match(
+      /^(pre(?:[.#][\w-]+)*)(?:\s*\{)?\s*(["'])([\s\S]*?)\2\s*$/
+    );
+    if (preTagMatch) {
+      // e.g. pre.m-0 "some code here"
+      const tag = preTagMatch[1];
+      const rawContent = preTagMatch[3];
+      // Convert tag to HTML class/id attributes
+      let tagName = "pre";
+      let classList = [];
+      let idAttr = "";
+      const tagParts = tag.split(/(?=[.#])/);
+      tagParts.forEach((part) => {
+        if (part.startsWith(".")) classList.push(part.slice(1));
+        else if (part.startsWith("#")) idAttr = part.slice(1);
+      });
+      let attrs = "";
+      if (classList.length) attrs += ` class=\"${classList.join(" ")}\"`;
+      if (idAttr) attrs += ` id=\"${idAttr}\"`;
+
+      // Convert escaped \n to actual newlines
+      const cleanContent = rawContent.replace(/\\n/g, "\n");
+      // Escape HTML special characters to preserve raw content
+      const escapedContent = cleanContent
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+      // Render raw content as-is without parsing
+      return `<pre${attrs}>${escapedContent}</pre>`;
+    }
     if (!line || this.commentRegex.test(line)) return "";
 
     // Custom importjs directive for invoking JS module functions

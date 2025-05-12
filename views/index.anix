@@ -1,11 +1,11 @@
 page ["Home", "/"] {
   div.d-flex.flex-col.jc-center.ai-center.h-screen.gap-8.bg-dark.txt-mono {
-    div.logo.animate-fade{
+    div.logo.animate-jello{
   img>src="./assets/img/anix.png", alt="Anix Logo"<
     }
    div.buttons.fs-lg{
-      a.btn.btn-secondary.frosted.clr-white "Github" -> "#";
-     a.btn.btn-primary "See Docs" -> "#";
+      a.btn.btn-secondary.frosted.clr-white.hover-jello "Github" -> "https://github.com/anishkarki037/anix";
+     a.btn.btn-primary.hover-jello "See Docs" -> "#";
    }
      div.u-text.txt-center{
       span.clr-light"Start building by editing"

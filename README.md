@@ -44,10 +44,9 @@ Anix is designed for developers who want to build web applications quickly, with
 
 ## Installation
 
-1. **Clone the repository:**
+1. **Create anix app:**
    ```bash
-   git clone https://github.com/anishkarki037/anix.git <your-project-name>
-   cd anix-project
+   npx create-anix <your_app_name>
    ```
 2. **Install dependencies:**
    ```bash
@@ -55,7 +54,7 @@ Anix is designed for developers who want to build web applications quickly, with
    ```
 3. **Start the development server:**
    ```bash
-   npm run dev
+   npm start
    ```
 4. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000) (or your configured port).
@@ -66,7 +65,7 @@ Anix is designed for developers who want to build web applications quickly, with
 
 ```
 ├── views/            # UI templates (.anix files)
-├── src/
+├── core/
 │   ├── parser.js     # Anix parser and renderer
 │   ├── compiler.js   # Compilation logic
 │   └── dev-server.js # Development server

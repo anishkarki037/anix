@@ -1,7 +1,7 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import express from "express";
-import { Astpoint } from "../../src/astpoint.js";
+import { Astpoint } from "../../core/astpoint.js";
 import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);

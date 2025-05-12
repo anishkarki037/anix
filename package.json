@@ -2,11 +2,11 @@
   "name": "anix",
   "version": "1.0.0",
   "description": "Anix SPA Compiler",
-  "main": "src/compiler.js",
+  "main": "core/compiler.js",
   "scripts": {
-    "build": "node src/compiler.js",
-    "dev": "node src/dev-server.js",
-    "start": "node src/dev-server.js",
+    "build": "node core/compiler.js",
+    "dev": "node core/dev-server.js",
+    "start": "node core/dev-server.js",
     "server": "node backend/astpoint-server.js",
     "ast-gui": "node backend/server.js"
   },

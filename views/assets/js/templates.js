@@ -7,16 +7,28 @@
  */
 function signupCardTemplate() {
   return `
-      <div class="card-dark signup-card">
-        <h2>Sign Up</h2>
+      <div class="card w-1\/2 my-3 signup-card">
+        <h2 class="h1 txt-center">Sign Up</h2>
         <form id="signupForm">
-          <input class="input mb-2" type="text" name="username" placeholder="Username" required />
-          <input class="input mb-2" type="email" name="email" placeholder="Email" required />
-          <input class="input mb-2" type="password" name="password" placeholder="Password" required />
-          <input class="input mb-2" type="text" name="fullName" placeholder="Full Name" />
-          <input class="input mb-2" type="number" name="age" placeholder="Age" />
-          <label><input class="checkbox" type="checkbox" name="terms" required /> Accept Terms</label>
-          <button class="btn btn-primary" type="submit">Sign Up</button>
+         <div class="form-group"> 
+              <input class="input mb-2" type="text" name="fullName" placeholder="Full Name" />
+          </div>
+          <div class="form-group"> 
+            <input class="input mb-2" type="text" name="username" placeholder="Username" required />
+          </div>
+          <div class="form-group"> 
+              <input class="input mb-2" type="number" name="age" placeholder="Age" />
+          </div>
+          <div class="form-group"> 
+              <input class="input mb-2" type="email" name="email" placeholder="Email" required />
+          </div>
+          <div class="form-group"> 
+              <input class="input mb-2" type="password" name="password" placeholder="Password" required />
+          </div>
+          <div class="form-group my-1"> 
+             <label><input class="checkbox" type="checkbox" name="terms" required /> Accept Terms</label>
+          </div>
+          <button class="btn btn-secondary bg-grad-dark hover-jello" type="submit">Sign Up</button>
         </form>
         <div class="signup-message"></div>
         <script>
@@ -55,12 +67,12 @@ function signupCardTemplate() {
  */
 function loginCardTemplate() {
   return `
-      <div class="card login-card">
-        <h2>Login</h2>
+      <div class="card card w-1\/2 my-3 login-card">
+        <h2 class="h1 txt-center">Login</h2>
         <form id="loginForm">
-          <input type="text" name="username" placeholder="Username or Email" required />
-          <input type="password" name="password" placeholder="Password" required />
-          <button type="submit">Login</button>
+          <input class="input mb-2" type="text" name="username" placeholder="Username or Email" required />
+          <input class="input mb-2" type="password" name="password" placeholder="Password" required />
+          <button class="btn btn-secondary bg-grad-dark hover-jello" type="submit">Login</button>
         </form>
         <div class="login-message"></div>
         <script>
@@ -99,13 +111,13 @@ function loginCardTemplate() {
  */
 function contactCardTemplate() {
   return `
-      <div class="card contact-card">
-        <h2>Contact Us</h2>
+      <div class="card w-1\/2 my-3 contact-card">
+        <h2 class="h1 txt-center">Contact Us</h2>
         <form id="contactForm">
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <textarea name="message" placeholder="Your Message" required></textarea>
-          <button type="submit">Send</button>
+          <input class="input mb-2" type="text" name="name" placeholder="Your Name" required />
+          <input class="input mb-2" type="email" name="email" placeholder="Your Email" required />
+          <textarea class="input mb-2 resize-none" name="message" placeholder="Your Message" required></textarea>
+          <button class="btn btn-secondary bg-grad-dark hover-jello" type="submit">Send</button>
         </form>
         <div class="contact-message"></div>
         <script>
@@ -144,11 +156,11 @@ function contactCardTemplate() {
  */
 function searchCardTemplate() {
   return `
-      <div class="card search-card">
-        <h2>Search</h2>
-        <form id="searchForm">
-          <input type="text" name="query" placeholder="Search..." required />
-          <button type="submit">Search</button>
+      <div class="card my-3 w-1\/2 search-card">
+        <h2 class="h1 txt-center">Search</h2>
+        <form class="d-flex gap-2" id="searchForm">
+          <input class="input mb-2" type="text" name="query" placeholder="Search..." required />
+          <button class="btn btn-secondary bg-grad-dark hover-jello py-1" type="submit">Search</button>
         </form>
         <div class="search-results"></div>
         <script>

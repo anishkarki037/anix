@@ -68,6 +68,9 @@ body {
   line-height: 1.5;
   color: var(--dark);
   background-color: var(--light);
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 img,
@@ -862,31 +865,31 @@ video {
 .w-auto {
   width: auto;
 }
-.w-1\/2 {
+.w-50 {
   width: 50%;
 }
-.w-1\/3 {
+.w-33 {
   width: 33.333333%;
 }
-.w-2\/3 {
+.w-66 {
   width: 66.666667%;
 }
-.w-1\/4 {
+.w-25 {
   width: 25%;
 }
-.w-3\/4 {
+.w-75 {
   width: 75%;
 }
-.w-1\/5 {
+.w-20 {
   width: 20%;
 }
-.w-2\/5 {
+.w-40 {
   width: 40%;
 }
-.w-3\/5 {
+.w-60 {
   width: 60%;
 }
-.w-4\/5 {
+.w-80 {
   width: 80%;
 }
 
@@ -899,19 +902,19 @@ video {
 .h-auto {
   height: auto;
 }
-.h-1\/2 {
+.h-50 {
   height: 50%;
 }
-.h-1\/3 {
+.h-33 {
   height: 33.333333%;
 }
-.h-2\/3 {
+.h-66 {
   height: 66.666667%;
 }
-.h-1\/4 {
+.h-25 {
   height: 25%;
 }
-.h-3\/4 {
+.h-75 {
   height: 75%;
 }
 
@@ -1172,11 +1175,11 @@ video {
 
 /* Slide animations */
 .animate-slide-in-left {
-  animation: slideInLeft 0.5s ease-out forwards;
+  animation: slideInLeft 0.8s ease-out forwards;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.5s ease-out forwards;
+  animation: slideInRight 0.8s ease-out forwards;
 }
 
 /* Heartbeat animation */
@@ -1196,6 +1199,242 @@ video {
 
 .animate-jello {
   animation: jello 1s ease-in-out;
+}
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.6s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.6s ease-out forwards;
+}
+@keyframes slideInUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown 0.5s ease-out forwards;
+}
+
+/* Keyframes for Zoom animations */
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomInUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes zoomInDown {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes zoomInLeft {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateX(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes zoomInRight {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* Keyframes for Rotate animations */
+@keyframes rotateIn {
+  0% {
+    transform: rotate(-200deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rotateInUpLeft {
+  0% {
+    transform: rotate(-90deg);
+    transform-origin: left bottom;
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0);
+    transform-origin: left bottom;
+    opacity: 1;
+  }
+}
+
+@keyframes rotateInUpRight {
+  0% {
+    transform: rotate(90deg);
+    transform-origin: right bottom;
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0);
+    transform-origin: right bottom;
+    opacity: 1;
+  }
+}
+
+/* Keyframes for Bounce In */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Keyframes for Rubber Band */
+@keyframes rubberBand {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  40% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  50% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  65% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* Animate classes */
+.animate-zoom-in {
+  animation: zoomIn 0.6s ease-out forwards;
+}
+
+.animate-zoom-in-up {
+  animation: zoomInUp 0.6s ease-out forwards;
+}
+
+.animate-zoom-in-down {
+  animation: zoomInDown 0.6s ease-out forwards;
+}
+
+.animate-zoom-in-left {
+  animation: zoomInLeft 0.6s ease-out forwards;
+}
+
+.animate-zoom-in-right {
+  animation: zoomInRight 0.6s ease-out forwards;
+}
+
+.animate-rotate-in {
+  animation: rotateIn 0.7s ease-out forwards;
+}
+
+.animate-rotate-in-up-left {
+  animation: rotateInUpLeft 0.7s ease-out forwards;
+}
+
+.animate-rotate-in-up-right {
+  animation: rotateInUpRight 0.7s ease-out forwards;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.9s ease-out forwards;
+}
+
+.animate-rubber-band {
+  animation: rubberBand 1s ease-in-out;
 }
 
 /* Progress loading animation */

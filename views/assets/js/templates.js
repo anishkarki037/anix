@@ -7,7 +7,7 @@
  */
 function signupCardTemplate() {
   return `
-      <div class="card w-1\/2 my-3 signup-card">
+      <div class="card w-half my-3 signup-card">
         <h2 class="h1 txt-center">Sign Up</h2>
         <form id="signupForm">
          <div class="form-group"> 
@@ -67,7 +67,7 @@ function signupCardTemplate() {
  */
 function loginCardTemplate() {
   return `
-      <div class="card card w-1\/2 my-3 login-card">
+      <div class="card card w-half my-3 login-card">
         <h2 class="h1 txt-center">Login</h2>
         <form id="loginForm">
           <input class="input mb-2" type="text" name="username" placeholder="Username or Email" required />
@@ -111,7 +111,7 @@ function loginCardTemplate() {
  */
 function contactCardTemplate() {
   return `
-      <div class="card w-1\/2 my-3 contact-card">
+      <div class="card w-half my-3 contact-card">
         <h2 class="h1 txt-center">Contact Us</h2>
         <form id="contactForm">
           <input class="input mb-2" type="text" name="name" placeholder="Your Name" required />
@@ -156,7 +156,7 @@ function contactCardTemplate() {
  */
 function searchCardTemplate() {
   return `
-      <div class="card my-3 w-1\/2 search-card">
+      <div class="card my-3 w-half search-card">
         <h2 class="h1 txt-center">Search</h2>
         <form class="d-flex gap-2" id="searchForm">
           <input class="input mb-2" type="text" name="query" placeholder="Search..." required />

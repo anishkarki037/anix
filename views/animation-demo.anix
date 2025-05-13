@@ -1,13 +1,69 @@
-page ["Animation","/url"] {
-    header {
-        h1 "Title";
-    }
+page ["Animation Demo","/animation-demo"] {
+     // Add asset includes for CSS and JS
+    link(rel="stylesheet", href="./assets/css/shorthand.css")
+    script(src="./assets/js/scroll-animate.js")
     
-    main {
-        
+   main.bg-grad-dark.clr-light.txt-mono{
+    div.container {
+        div.txt-center.py-5 {
+        h1.h1 "Anix Scroll Triggered Animations";
+        p "Scroll down to see various animation effects in action.";
     }
-    
+        section.my-5.py-5 {
+            h2.h2.txt-center "Fade Animations";
+            div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+             div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="fade-in-up") "Fade In Up";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="fade-in-down")  "Fade In Down";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="fade-in-left")  "Fade In Left";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="fade-in-right")  "Fade In Right";
+            }
+           
+        }
+        section.my-5.container  {
+            h2.h2.txt-center "Slide Animations";
+             div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="slide-in-up")  "Slide In Up";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="slide-in-down") "Slide In Down";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="slide-in-left")  "Slide In Left";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="slide-in-right")  "Slide In Right";
+             }
+        }
+        section.my-5.container  {
+            h2.h2.txt-center "Zoom Animations";
+           div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="zoom-in")  "Zoom In";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="zoom-in-up")  "Zoom In Up";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="zoom-in-down")  "Zoom In Down";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="zoom-in-left")  "Zoom In Left";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="zoom-in-right")  "Zoom In Right";
+            }
+        }
+        section.my-5.container  {
+            h2.h2.txt-center "Flip Animations";
+            div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="flip-x")  "Flip X";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="flip-y")  "Flip Y";
+            }
+        }
+        section.my-5.container  {
+            h2.h2.txt-center "Rotate Animations";
+            div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="rotate-in")  "Rotate In";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="rotate-in-up-left")  "Rotate In Up Left";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="rotate-in-up-right")  "Rotate In Up Right";
+            }
+        }
+        section.my-5.container  {
+            h2.h2.txt-center "Special Animations";
+            div.d-flex.jc-center.ai-center.flex-wrap.gap-6{
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="bounce-in")  "Bounce In";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="jello")  "Jello";
+            div.p5.radius-xl.d-flex.jc-center.ai-center.w-40.bg-glass.fs-4xl.frosted.scroll-animate(style="height:200px;place-content-center" data-animate="rubber-band")  "Rubber Band";
+            }
+        }
+    }
     footer {
-        p "© 2025";
+        p "© 2025 Anix";
     }
+   }
 }

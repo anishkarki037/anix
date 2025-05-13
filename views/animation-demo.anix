@@ -1,0 +1,13 @@
+page ["Animation","/url"] {
+    header {
+        h1 "Title";
+    }
+    
+    main {
+        
+    }
+    
+    footer {
+        p "© 2025";
+    }
+}

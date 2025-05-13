@@ -38,7 +38,7 @@ function parseAnixFile(filename) {
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>${path.basename(filename, ".anix")}</title>
+        <title>${parser.pageName || path.basename(filename, ".anix")}</title>
         <link rel="stylesheet" href="./assets/css/style.css" />
         <link rel="stylesheet" href="./assets/css/shorthand.css" />
         <script src="/socket.io/socket.io.js"></script>

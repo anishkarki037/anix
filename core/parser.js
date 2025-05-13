@@ -48,6 +48,7 @@ class AnixParser {
   }
 
   parseFile(filename) {
+    this.pageName = null;
     const filePath = path.join(this.viewsPath, filename);
     if (!fs.existsSync(filePath)) {
       throw new Error(`File not found: ${filename}`);
@@ -66,6 +67,14 @@ class AnixParser {
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
+
+      // Extract page name from page declaration
+      if (!this.pageName) {
+        const pageMatch = line.match(/^page\s*\[\s*"([^"]+)"/);
+        if (pageMatch) {
+          this.pageName = pageMatch[1];
+        }
+      }
 
       // Detect pre block with opening brace
       if (line.startsWith("pre") && line.endsWith("{")) {

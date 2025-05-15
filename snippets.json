@@ -1,0 +1,302 @@
+{
+  "Page Declaration": {
+    "prefix": "page",
+    "body": "page [\"${1:title}\", \"${2:url}\"] {\n  $0\n}",
+    "description": "Create a new page with title and URL"
+  },
+  "Include File": {
+    "prefix": "include",
+    "body": "include \"${1:filename}.anix\";",
+    "description": "Include another Anix file"
+  },
+  "Pre Block": {
+    "prefix": "pre",
+    "body": "pre${1:#id}${2:.class} {\n  ${3:content}\n}",
+    "description": "Create a preformatted code block"
+  },
+  "Pre Inline": {
+    "prefix": "prei",
+    "body": "pre${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create an inline preformatted code block"
+  },
+  "Script Block": {
+    "prefix": "script",
+    "body": "script {\n  ${1:// JavaScript code}\n}",
+    "description": "Create a script block"
+  },
+  "Script Inline": {
+    "prefix": "scripti",
+    "body": "script: ${1:// JavaScript code}",
+    "description": "Create an inline script"
+  },
+  "Script with Source": {
+    "prefix": "scripts",
+    "body": "script(src=\"${1:path/to/script.js}\")",
+    "description": "Include an external JavaScript file"
+  },
+  "Import JS Module": {
+    "prefix": "importjs",
+    "body": "importjs ${1:path/to/module}: ${2:functionName}(${3:args});",
+    "description": "Import and execute a JavaScript module function"
+  },
+  "Template Function": {
+    "prefix": "template",
+    "body": "{{${1:functionName}}}",
+    "description": "Call a template function from templates.js"
+  },
+  "Click Event": {
+    "prefix": "js:click",
+    "body": "js:click(${1:selector}) {\n  ${2:// code to run on click}\n}",
+    "description": "Add a click event listener"
+  },
+  "Hover Event": {
+    "prefix": "js:hover",
+    "body": "js:hover(${1:selector}) {\n  ${2:// code to run on hover}\n}",
+    "description": "Add a mouseover event listener"
+  },
+  "Leave Event": {
+    "prefix": "js:leave",
+    "body": "js:leave(${1:selector}) {\n  ${2:// code to run on mouse leave}\n}",
+    "description": "Add a mouseout event listener"
+  },
+  "Submit Event": {
+    "prefix": "js:submit",
+    "body": "js:submit(${1:selector}) {\n  ${2:// code to run on form submit}\n}",
+    "description": "Add a submit event listener with preventDefault"
+  },
+  "Change Event": {
+    "prefix": "js:change",
+    "body": "js:change(${1:selector}) {\n  ${2:// code to run on change}\n}",
+    "description": "Add a change event listener"
+  },
+  "Keyup Event": {
+    "prefix": "js:keyup",
+    "body": "js:keyup(${1:selector}) {\n  ${2:// code to run on keyup}\n}",
+    "description": "Add a keyup event listener"
+  },
+  "Load Event": {
+    "prefix": "js:load",
+    "body": "js:load(${1:selector}) {\n  ${2:// code to run on DOMContentLoaded}\n}",
+    "description": "Add a DOMContentLoaded event listener"
+  },
+  "Ajax Request": {
+    "prefix": "js:ajax",
+    "body": "js:ajax(${1:url}) {\n  method: '${2:GET}',\n  headers: {\n    'Content-Type': 'application/json'\n  }${3:,\n  body: JSON.stringify({\n    key: 'value'\n  })}\n}",
+    "description": "Make an AJAX request using fetch"
+  },
+  "Get Element": {
+    "prefix": "js:get",
+    "body": "js:get(${1:selector})${2:.property}",
+    "description": "Get a DOM element using querySelector"
+  },
+  "Get All Elements": {
+    "prefix": "js:getAll",
+    "body": "js:getAll(${1:selector})${2:.forEach(item => {\n  // Do something with each item\n})}",
+    "description": "Get all matching DOM elements using querySelectorAll"
+  },
+  "Toggle Class": {
+    "prefix": "js:toggle",
+    "body": "js:toggle(${1:selector}, ${2:className})",
+    "description": "Toggle a class on an element"
+  },
+  "Add Class": {
+    "prefix": "js:addClass",
+    "body": "js:addClass(${1:selector}, ${2:className})",
+    "description": "Add a class to an element"
+  },
+  "Remove Class": {
+    "prefix": "js:removeClass",
+    "body": "js:removeClass(${1:selector}, ${2:className})",
+    "description": "Remove a class from an element"
+  },
+  "Wait/Timeout": {
+    "prefix": "js:wait",
+    "body": "js:wait(${1:1000}ms) {\n  ${2:// code to run after timeout}\n}",
+    "description": "Set a timeout to run code after a delay"
+  },
+  "HTML Element": {
+    "prefix": "element",
+    "body": "${1:div}${2:#id}${3:.class}${4:(${5:attr}=\"${6:value}\")} \"${7:content}\"",
+    "description": "Create an HTML element with optional class, ID, attributes, and content"
+  },
+  "HTML Element Block": {
+    "prefix": "elementb",
+    "body": "${1:div}${2:#id}${3:.class}${4:(${5:attr}=\"${6:value}\")} {\n  $0\n}",
+    "description": "Create an HTML element block with optional class, ID, and attributes"
+  },
+  "Link": {
+    "prefix": "link",
+    "body": "${1:a}${2:.class} \"${3:Link text}\" -> \"${4:url}\"",
+    "description": "Create a link with text and URL"
+  },
+  "Input": {
+    "prefix": "input",
+    "body": "input${1:#id}${2:.class}(type=\"${3:text}\", name=\"${4:name}\", placeholder=\"${5:placeholder}\")",
+    "description": "Create an input element"
+  },
+  "Image": {
+    "prefix": "img",
+    "body": "img${1:#id}${2:.class}(src=\"${3:path/to/image}\", alt=\"${4:description}\")",
+    "description": "Create an image element"
+  },
+  "Button": {
+    "prefix": "button",
+    "body": "button${1:#id}${2:.class}${3:(${4:attr}=\"${5:value}\")} \"${6:Button text}\"",
+    "description": "Create a button element"
+  },
+  "Form": {
+    "prefix": "form",
+    "body": "form${1:#id}${2:.class}(action=\"${3:url}\", method=\"${4:post}\") {\n  $0\n}",
+    "description": "Create a form element"
+  },
+  "Div": {
+    "prefix": "div",
+    "body": "div${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a div element"
+  },
+  "Span": {
+    "prefix": "span",
+    "body": "span${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a span element"
+  },
+  "Paragraph": {
+    "prefix": "p",
+    "body": "p${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a paragraph element"
+  },
+  "Heading 1": {
+    "prefix": "h1",
+    "body": "h1${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create an h1 element"
+  },
+  "Heading 2": {
+    "prefix": "h2",
+    "body": "h2${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create an h2 element"
+  },
+  "Heading 3": {
+    "prefix": "h3",
+    "body": "h3${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create an h3 element"
+  },
+  "Unordered List": {
+    "prefix": "ul",
+    "body": "ul${1:#id}${2:.class} {\n  li \"${3:Item 1}\"\n  li \"${4:Item 2}\"\n  $0\n}",
+    "description": "Create an unordered list"
+  },
+  "Ordered List": {
+    "prefix": "ol",
+    "body": "ol${1:#id}${2:.class} {\n  li \"${3:Item 1}\"\n  li \"${4:Item 2}\"\n  $0\n}",
+    "description": "Create an ordered list"
+  },
+  "List Item": {
+    "prefix": "li",
+    "body": "li${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a list item"
+  },
+  "Table": {
+    "prefix": "table",
+    "body": "table${1:#id}${2:.class} {\n  tr {\n    th \"${3:Header 1}\"\n    th \"${4:Header 2}\"\n  }\n  tr {\n    td \"${5:Data 1}\"\n    td \"${6:Data 2}\"\n  }\n  $0\n}",
+    "description": "Create a table"
+  },
+  "Table Row": {
+    "prefix": "tr",
+    "body": "tr${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a table row"
+  },
+  "Table Header Cell": {
+    "prefix": "th",
+    "body": "th${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a table header cell"
+  },
+  "Table Data Cell": {
+    "prefix": "td",
+    "body": "td${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a table data cell"
+  },
+  "Section": {
+    "prefix": "section",
+    "body": "section${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a section element"
+  },
+  "Article": {
+    "prefix": "article",
+    "body": "article${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create an article element"
+  },
+  "Header": {
+    "prefix": "header",
+    "body": "header${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a header element"
+  },
+  "Footer": {
+    "prefix": "footer",
+    "body": "footer${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a footer element"
+  },
+  "Nav": {
+    "prefix": "nav",
+    "body": "nav${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a nav element"
+  },
+  "Aside": {
+    "prefix": "aside",
+    "body": "aside${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create an aside element"
+  },
+  "Main": {
+    "prefix": "main",
+    "body": "main${1:#id}${2:.class} {\n  $0\n}",
+    "description": "Create a main element"
+  },
+  "Textarea": {
+    "prefix": "textarea",
+    "body": "textarea${1:#id}${2:.class}(name=\"${3:name}\", rows=\"${4:4}\", cols=\"${5:50}\", placeholder=\"${6:Enter text here...}\")",
+    "description": "Create a textarea element"
+  },
+  "Select": {
+    "prefix": "select",
+    "body": "select${1:#id}${2:.class}(name=\"${3:name}\") {\n  option(value=\"${4:value1}\") \"${5:Option 1}\"\n  option(value=\"${6:value2}\") \"${7:Option 2}\"\n  $0\n}",
+    "description": "Create a select dropdown"
+  },
+  "Option": {
+    "prefix": "option",
+    "body": "option(value=\"${1:value}\") \"${2:Option text}\"",
+    "description": "Create an option for a select element"
+  },
+  "Label": {
+    "prefix": "label",
+    "body": "label${1:#id}${2:.class}(for=\"${3:inputId}\") \"${4:Label text}\"",
+    "description": "Create a label element"
+  },
+  "Fieldset": {
+    "prefix": "fieldset",
+    "body": "fieldset${1:#id}${2:.class} {\n  legend \"${3:Legend text}\"\n  $0\n}",
+    "description": "Create a fieldset with legend"
+  },
+  "Legend": {
+    "prefix": "legend",
+    "body": "legend${1:#id}${2:.class} \"${3:content}\"",
+    "description": "Create a legend element"
+  },
+  "Checkbox": {
+    "prefix": "checkbox",
+    "body": "input${1:#id}${2:.class}(type=\"checkbox\", name=\"${3:name}\", value=\"${4:value}\")",
+    "description": "Create a checkbox input"
+  },
+  "Radio": {
+    "prefix": "radio",
+    "body": "input${1:#id}${2:.class}(type=\"radio\", name=\"${3:name}\", value=\"${4:value}\")",
+    "description": "Create a radio input"
+  },
+  "Inline Void Tag": {
+    "prefix": "void",
+    "body": "${1:tag}${2:#id}${3:.class}>${4:attr}=\"${5:value}\"<",
+    "description": "Create an inline void tag with attributes"
+  },
+  "Comment": {
+    "prefix": "comment",
+    "body": "// ${1:comment}",
+    "description": "Add a comment line"
+  }
+}

@@ -51,7 +51,7 @@ class AnixParser {
     this.pageName = null;
     const filePath = path.join(this.viewsPath, filename);
     if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filename}`);
+      throw new Error(`Entry file not found: ${filename}`);
     }
 
     let content = fs.readFileSync(filePath, "utf-8");
@@ -318,44 +318,19 @@ class AnixParser {
 
     // Handle any unclosed JS command blocks at EOF
     if (insideJsCommand) {
-      const command = jsCommandName;
-      const selector = jsSelector;
-      const content = jsContent.trim();
-      const jsCode = this.jsCommands[command];
-
-      let generatedJs = "";
-      if (command === "js:ajax") {
-        generatedJs = `fetch('${selector}', ${content || "{}"})`;
-      } else if (command === "js:get" || command === "js:getAll") {
-        generatedJs = `${jsCode}('${selector}')`;
-        if (content) {
-          generatedJs += `.${content}`;
-        }
-      } else if (
-        command === "js:toggle" ||
-        command === "js:addClass" ||
-        command === "js:removeClass"
-      ) {
-        generatedJs = `document.querySelector('${selector}').${jsCode}('${content}')`;
-      } else if (command === "js:wait") {
-        const timeMatch = selector.match(/(\d+)(ms|s)?/);
-        let time = 0;
-        if (timeMatch) {
-          time = parseInt(timeMatch[1]);
-          if (timeMatch[2] === "s") time *= 1000;
-        }
-        generatedJs = `${jsCode}\n  ${content}\n}, ${time})`;
-      } else {
-        generatedJs = `document.querySelector('${selector}').${jsCode}\n  ${content}\n})`;
-      }
-
-      html += `<script>${generatedJs}</script>\n`;
+      throw new Error(
+        `Unclosed JS command block starting with: ${jsCommandName}('${jsSelector}') {`
+      );
     }
 
     // Close any remaining open blocks
-    while (this.openBlocks.length > 0) {
-      const lastTag = this.openBlocks.pop();
-      html += `</${lastTag}>\n`;
+    // At the end of the parseFile function...
+
+    if (this.openBlocks.length > 0) {
+      const openTag = this.openBlocks[this.openBlocks.length - 1];
+      throw new Error(
+        `Syntax Error: Unclosed block for tag '${openTag}'. A closing '}' is missing.`
+      );
     }
 
     return html;
@@ -387,22 +362,19 @@ class AnixParser {
         const includedContent = fs.readFileSync(includePath, "utf-8");
         return this.resolveIncludes(includedContent);
       } else {
-        console.warn(`⚠️ Include not found: ${includeFile}`);
+        throw new Error(`Include file not found: ${includeFile}`);
         return "";
       }
     });
   }
 
   parseLine(line) {
-    // Detect pre tag for raw text rendering
     const preTagMatch = line.match(
       /^(pre(?:[.#][\w-]+)*)(?:\s*\{)?\s*(["'])([\s\S]*?)\2\s*$/
     );
     if (preTagMatch) {
-      // e.g. pre.m-0 "some code here"
       const tag = preTagMatch[1];
       const rawContent = preTagMatch[3];
-      // Convert tag to HTML class/id attributes
       let tagName = "pre";
       let classList = [];
       let idAttr = "";
@@ -414,23 +386,17 @@ class AnixParser {
       let attrs = "";
       if (classList.length) attrs += ` class=\"${classList.join(" ")}\"`;
       if (idAttr) attrs += ` id=\"${idAttr}\"`;
-
-      // Convert escaped \n to actual newlines
       const cleanContent = rawContent.replace(/\\n/g, "\n");
-      // Escape HTML special characters to preserve raw content
       const escapedContent = cleanContent
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
-      // Render raw content as-is without parsing
       return `<pre${attrs}>${escapedContent}</pre>`;
     }
     if (!line || this.commentRegex.test(line)) return "";
 
-    // Custom importjs directive for invoking JS module functions
     const importJsMatch = line.match(
       /^importjs\s+([\w.\/\\-]+)\s*:\s*([\w$]+)\(([^)]*)\);?$/
     );
@@ -440,10 +406,8 @@ class AnixParser {
       const rawArgs = importJsMatch[3];
       let args = [];
       if (rawArgs.trim()) {
-        // Split arguments by comma, respecting quotes
         args = this.safeSplitAttributes(rawArgs);
       }
-      // Resolve absolute path relative to project root or views/assets/js
       let absPath = jsPath;
       if (!path.isAbsolute(jsPath)) {
         absPath = path.join(process.cwd(), "views", "assets", "js", jsPath);
@@ -452,26 +416,25 @@ class AnixParser {
         }
       }
       if (!fs.existsSync(absPath)) {
-        return `<!-- importjs: JS file not found: ${jsPath} -->`;
+        throw new Error(`importjs: JavaScript file not found at '${jsPath}'`);
       }
       try {
         const mod = require(absPath);
         if (typeof mod[funcName] === "function") {
-          const result = mod[funcName](...args);
-          return result;
+          return mod[funcName](...args);
         } else {
-          return `<!-- importjs: Function '${funcName}' not found in ${jsPath} -->`;
+          throw new Error(
+            `importjs: Function '${funcName}' not found in ${jsPath}`
+          );
         }
       } catch (err) {
-        return `<!-- importjs error: ${err.message} -->`;
+        throw new Error(`importjs error in '${jsPath}': ${err.message}`);
       }
     }
 
-    // Handle {{functionName}} template directive for server-side rendering
     const templateDirectiveMatch = line.match(/^\{\{\s*([\w$]+)\s*\}\}$/);
     if (templateDirectiveMatch) {
       const funcName = templateDirectiveMatch[1];
-      // Try to load from views/assets/js/templates.js
       let absPath = path.join(
         process.cwd(),
         "views",
@@ -484,37 +447,33 @@ class AnixParser {
       }
       if (fs.existsSync(absPath)) {
         try {
+          delete require.cache[require.resolve(absPath)];
           const mod = require(absPath);
           if (typeof mod[funcName] === "function") {
             return mod[funcName]();
           } else {
-            return `<!-- template: Function '${funcName}' not found in templates.js -->`;
+            throw new Error(
+              `Template Error: Function '${funcName}' not found in templates.js`
+            );
           }
         } catch (err) {
-          return `<!-- template error: ${err.message} -->`;
+          throw new Error(`Template Error in 'templates.js': ${err.message}`);
         }
       } else {
-        return `<!-- template: templates.js not found -->`;
+        throw new Error(`Template Error: 'templates.js' file not found.`);
       }
     }
-    // Check for custom JavaScript commands
+
     for (const [command, jsCode] of Object.entries(this.jsCommands)) {
       if (line.startsWith(command)) {
-        // Format: js:command(selector) { ... }
         const jsMatch = line.match(/^(js:\w+)\(([^)]*)\)\s*\{(.*)\}\s*;?$/);
         if (jsMatch) {
           const selector = jsMatch[2].trim();
           const content = jsMatch[3].trim();
-
-          // Generate appropriate JavaScript based on the command
           let generatedJs = "";
-
           if (command === "js:ajax") {
-            // Special handling for ajax command
-            // Format: js:ajax(url) { options }
             generatedJs = `fetch('${selector}', ${content || "{}"})`;
           } else if (command === "js:get" || command === "js:getAll") {
-            // Special handling for DOM selection
             generatedJs = `${jsCode}('${selector}')`;
             if (content) {
               generatedJs += `.${content}`;
@@ -524,30 +483,23 @@ class AnixParser {
             command === "js:addClass" ||
             command === "js:removeClass"
           ) {
-            // Special handling for class manipulation
             generatedJs = `document.querySelector('${selector}').${jsCode}('${content}')`;
           } else if (command === "js:wait") {
-            // Special handling for wait/timeout
             const timeMatch = selector.match(/(\d+)(ms|s)?/);
             let time = 0;
             if (timeMatch) {
               time = parseInt(timeMatch[1]);
-              if (timeMatch[2] === "s") time *= 1000; // Convert seconds to milliseconds
+              if (timeMatch[2] === "s") time *= 1000;
             }
             generatedJs = `${jsCode}\n  ${content}\n}, ${time})`;
           } else {
-            // Standard event listener
             generatedJs = `document.querySelector('${selector}').${jsCode}\n  ${content}\n})`;
           }
-
           return `<script>${generatedJs}</script>`;
         }
-
-        // Simpler format: js:command(selector, param)
         const simpleSyntaxMatch = line.match(/^(js:\w+)\(([^)]*)\)\s*;?$/);
         if (simpleSyntaxMatch) {
           const params = this.safeSplitAttributes(simpleSyntaxMatch[2]);
-
           if (command === "js:get" || command === "js:getAll") {
             return `<script>${jsCode}('${params[0]}');</script>`;
           } else if (
@@ -563,7 +515,6 @@ class AnixParser {
       }
     }
 
-    // Handle script tag with src attribute
     const scriptSrcMatch = line.match(
       /^script\s*\(src\s*[=:]\s*"([^"]+)"\)\s*$/
     );
@@ -571,7 +522,6 @@ class AnixParser {
       return `<script src="${scriptSrcMatch[1]}"></script>`;
     }
 
-    // Handle single-line script block
     if (line.match(/^script\s*\{.*\}\s*$/)) {
       const scriptContent = line.match(/script\s*\{([\s\S]*)\}$/);
       if (scriptContent && scriptContent[1]) {
@@ -579,23 +529,28 @@ class AnixParser {
       }
       return "<script></script>";
     }
-
     if (line.startsWith("script:"))
       return "<script>" + line.replace(/^script:\s*/, "") + "</script>";
 
-    if (line === "}") {
-      const closingTag = this.openBlocks.pop() || "div";
+    if (line.startsWith("}")) {
+      if (line !== "}") {
+        throw new Error(
+          `Syntax Error: Unexpected characters found after closing brace '}'. Full line: "${line}"`
+        );
+      }
+      const closingTag = this.openBlocks.pop();
+      if (!closingTag) {
+        throw new Error("Syntax Error: Unmatched closing brace '}'.");
+      }
       return `</${closingTag}>`;
     }
 
-    // Special case for specific input and img syntax with brackets
     const specificVoidTagMatch = line.match(/<(img|input)>(.+?)<\/\1>/);
     if (specificVoidTagMatch) {
       const tag = specificVoidTagMatch[1];
       const content = specificVoidTagMatch[2];
       return `<${tag}${this.parseVoidTagAttributes(content)}>`;
     }
-
     const pageMatch = line.match(/^page\s*\["([^"]+)",\s*"([^"]+)"\]\s*\{/);
     if (pageMatch) {
       const title = pageMatch[1];
@@ -604,7 +559,6 @@ class AnixParser {
       return `<div data-page="${title}" data-url="${url}">`;
     }
 
-    // Fixed inlineLinkMatch to handle multiple classes properly
     const inlineLinkMatch = line.match(
       /^([a-zA-Z0-9]+)((?:\.[\w-]+)+)?\s*"([^"]+)"\s*->\s*"([^"]+)";?$/
     );
@@ -620,115 +574,53 @@ class AnixParser {
       } href="${href}">${text}</${tag}>`;
     }
 
-    // Handle parenthesis syntax for void tags: input(type="text", name="name")
-    const voidTagParenMatch = line.match(
-      /^([a-zA-Z0-9]+)(#[\w-]+)?((?:\.[\w-]+)*)?(\((?:[^()"]+|"[^"]*")*\))(?:\s*"([^"]*)")?;?$/
-    );
-
-    if (
-      voidTagParenMatch &&
-      this.voidTags.includes(voidTagParenMatch[1].toLowerCase())
-    ) {
-      const tag = voidTagParenMatch[1];
-      const id = voidTagParenMatch[2] ? voidTagParenMatch[2].substring(1) : "";
-      const classes = voidTagParenMatch[3]
-        ? voidTagParenMatch[3]
-            .substring(1) // Remove the first dot
-            .split(".")
-            .filter((c) => c)
-            .join(" ")
-        : "";
-
-      const rawAttrs = voidTagParenMatch[4]
-        ? voidTagParenMatch[4].slice(1, -1)
-        : "";
-
-      let attrString = "";
-      if (id) attrString += ` id="${id}"`;
-      if (classes) attrString += ` class="${classes}"`;
-
-      // Parse attributes properly
-      attrString += this.parseAttributes(rawAttrs);
-
-      return `<${tag}${attrString}>`;
-    }
-
-    // Handle nested tag syntax for non-void tags
-    const nestedMatch = line.match(
-      /^([a-zA-Z0-9]+)((?:\.[\w-]+)*)\s*\((.+)\);?$/
-    );
-    if (nestedMatch) {
-      const outerTag = nestedMatch[1];
-      // Fix class handling
-      const outerClasses = nestedMatch[2]
-        ? nestedMatch[2].substring(1).split(".").filter(Boolean).join(" ")
-        : "";
-      const rawAttrs = nestedMatch[3];
-      let attrString = "";
-      if (outerClasses) attrString += ` class=\"${outerClasses}\"`;
-      // Parse attributes properly
-      attrString += this.parseAttributes(rawAttrs);
-      return `<${outerTag}${attrString}></${outerTag}>`;
-    }
-
-    // Handle inline void tag syntax: tag>attr="value", attr2="value2"<
-    const inlineVoidTagMatch = line.match(
-      /^([a-zA-Z0-9]+)(#[\w-]+)?((?:\.[\w-]+)*)?>(.+)<$/
-    );
-    if (inlineVoidTagMatch) {
-      const tag = inlineVoidTagMatch[1];
-      const id = inlineVoidTagMatch[2]
-        ? inlineVoidTagMatch[2].substring(1)
-        : "";
-      const classes = inlineVoidTagMatch[3]
-        ? inlineVoidTagMatch[3]
-            .substring(1) // Remove the first dot
-            .split(".")
-            .filter((c) => c)
-            .join(" ")
-        : "";
-      const attrContent = inlineVoidTagMatch[4];
-
-      let attrString = "";
-      if (id) attrString += ` id="${id}"`;
-      if (classes) attrString += ` class="${classes}"`;
-
-      const additionalAttrs = this.parseVoidTagAttributes(attrContent);
-
-      // For void tags, don't add closing tag
-      if (this.voidTags.includes(tag.toLowerCase())) {
-        return `<${tag}${attrString}${additionalAttrs}>`;
-      } else {
-        return `<${tag}${attrString}${additionalAttrs}></${tag}>`;
+    // ***** START OF MODIFIED SECTION *****
+    // This new helper function will be used by the following regex blocks
+    const parseModifiers = (modifiers, tag) => {
+      let id = "";
+      const classes = [];
+      if (modifiers) {
+        const parts = modifiers.split(/(?=[.#])/);
+        parts.forEach((part) => {
+          if (part.startsWith("#")) {
+            if (id)
+              throw new Error(
+                `Syntax Error: Multiple IDs are not allowed on tag '${tag}'.`
+              );
+            id = part.substring(1);
+          } else if (part.startsWith(".")) {
+            classes.push(part.substring(1));
+          }
+        });
       }
-    }
+      return { id, classes };
+    };
 
-    // Generic tag matching with attributes - fixed regex to handle multiple classes
-    const cleanMatch = line.match(
-      /^([a-zA-Z0-9]+)(#[\w-]+)?((?:\.[\w-]+)*)?(\((?:[^()"]+|"[^"]*")*\))?(?:\s*"([^"]*)")?(\s*\{)?;?$/
+    // MODIFIED REGEX: Captures ID and classes in any order
+    const flexibleTagMatch = line.match(
+      /^([a-zA-Z0-9]+)((?:[.#][\w-]+)*)?(>.*<|\((?:[^()"]+|"[^"]*")*\))?(?:\s*"([^"]*)")?(\s*\{)?;?$/
     );
-    if (cleanMatch) {
-      const tag = cleanMatch[1];
-      const id = cleanMatch[2] ? cleanMatch[2].substring(1) : "";
-      const classes = cleanMatch[3]
-        ? cleanMatch[3]
-            .substring(1) // Remove the first dot
-            .split(".")
-            .filter((c) => c)
-            .join(" ")
-        : "";
-      const rawAttrs = cleanMatch[4] ? cleanMatch[4].slice(1, -1) : "";
-      const rawContent = cleanMatch[5] || "";
-      const isBlock = !!cleanMatch[6];
+
+    if (flexibleTagMatch) {
+      const tag = flexibleTagMatch[1];
+      const modifiers = flexibleTagMatch[2] || "";
+      let attrContent = flexibleTagMatch[3] || "";
+      const rawContent = flexibleTagMatch[4] || "";
+      const isBlock = !!flexibleTagMatch[5];
+
+      const { id, classes } = parseModifiers(modifiers, tag);
 
       let attrString = "";
       if (id) attrString += ` id="${id}"`;
-      if (classes) attrString += ` class="${classes}"`;
+      if (classes.length > 0) attrString += ` class="${classes.join(" ")}"`;
 
-      // Parse attributes properly
-      attrString += this.parseAttributes(rawAttrs);
+      // Handle attributes from different syntax styles
+      if (attrContent.startsWith(">")) {
+        attrString += this.parseVoidTagAttributes(attrContent.slice(1, -1));
+      } else if (attrContent.startsWith("(")) {
+        attrString += this.parseAttributes(attrContent.slice(1, -1));
+      }
 
-      // Handle void tags correctly
       if (this.voidTags.includes(tag.toLowerCase())) {
         return `<${tag}${attrString}>`;
       }
@@ -738,7 +630,6 @@ class AnixParser {
         return `<${tag}${attrString}>`;
       }
 
-      // Handle normal tags with optional rawContent
       return rawContent
         ? `<${tag}${attrString}>${rawContent}</${tag}>`
         : `<${tag}${attrString}></${tag}>`;
@@ -796,14 +687,11 @@ class AnixParser {
     const parts = [];
     let current = "";
     let insideQuotes = false;
-
     for (let i = 0; i < content.length; i++) {
       const char = content[i];
-
       if (char === '"' && content[i - 1] !== "\\") {
         insideQuotes = !insideQuotes;
       }
-
       if (char === "," && !insideQuotes) {
         parts.push(current.trim());
         current = "";
@@ -811,24 +699,18 @@ class AnixParser {
         current += char;
       }
     }
-
     if (current) {
       parts.push(current.trim());
     }
-
     return parts;
   }
 
   parseAttributes(attrString) {
     if (!attrString.trim()) return "";
-
     const attrs = this.safeSplitAttributes(attrString);
     let attrString2 = "";
-
     attrs.forEach((attr) => {
-      // Handle both equals and colon syntax for attributes
       let key, value, rest;
-
       if (attr.includes("=")) {
         [key, ...rest] = attr.split("=");
         value = rest.join("=").trim();
@@ -839,16 +721,11 @@ class AnixParser {
         key = attr.trim();
         value = "";
       }
-
-      // Convert shorthand attribute names
       let attrKey = key.trim();
       if (attrKey.startsWith("@")) attrKey = "on" + attrKey.substring(1);
       if (attrKey === "w") attrKey = "width";
       if (attrKey === "h") attrKey = "height";
-
-      // Special handling for style attribute to preserve semicolons
       if (attrKey === "style" && value) {
-        // Remove outer quotes if present
         const cleanValue = value.replace(/^["']|["']$/g, "");
         attrString2 += ` ${attrKey}="${cleanValue}"`;
       } else if (value) {
@@ -857,7 +734,6 @@ class AnixParser {
         attrString2 += ` ${attrKey}`;
       }
     });
-
     return attrString2;
   }
 }

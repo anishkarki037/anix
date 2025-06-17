@@ -1,5 +1,7 @@
 page ["Home", "/"] {
+
   div.d-flex.flex-col.jc-center.ai-center.h-screen.gap-8.bg-dark.txt-mono {
+    
     div.logo.animate-jello{
   img(src="./assets/img/Anix.svg", alt="Anix Logo",w:800px);
     }
@@ -25,11 +27,5 @@ page ["Home", "/"] {
     span.clr-light"Use prebuilt assets like shorthand Css and JS templates from" 
      span.clr-primary"views/asserts"
      }
-   
-   
-
-   
   }
 }
-
-

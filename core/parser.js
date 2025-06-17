@@ -1,12 +1,24 @@
+// parser.js
 const fs = require("fs");
 const path = require("path");
 
 class AnixParser {
   constructor(viewsPath) {
     this.viewsPath = viewsPath;
-    this.includeRegex = /include\s+"(.+?)";/g;
+    this.components = {}; // Cache for loaded components
+
+    // Regex patterns
+    this.includeRegex = /include\s+(["'])(.+?)\1;/g;
+    this.importRegex = /^import\s+(['"])(.+?)\1;/;
     this.commentRegex = /^\s*(\/\/|#|###)/;
+
+    // State for parsing
     this.openBlocks = []; // stack to track open tags
+    this.insideMultilineScript = false;
+    this.scriptContent = "";
+    this.pageName = null;
+
+    // Void (self-closing) HTML tags
     this.voidTags = [
       "input",
       "img",
@@ -24,8 +36,6 @@ class AnixParser {
       "track",
       "wbr",
     ];
-    this.insideMultilineScript = false;
-    this.scriptContent = "";
 
     // Custom Anix JavaScript commands
     this.jsCommands = {
@@ -47,8 +57,143 @@ class AnixParser {
     };
   }
 
+  // --- NEW: Method to load and parse a component file ---
+  loadComponentsFromFile(componentPath) {
+    const fullPath = path.join(this.viewsPath, componentPath);
+    if (!fs.existsSync(fullPath)) {
+      throw new Error(`Component file not found: ${componentPath}`);
+    }
+
+    const content = fs.readFileSync(fullPath, "utf-8");
+    const lines = content.split("\n");
+
+    let inComponent = false;
+    let currentComponent = null;
+    let bodyLines = [];
+    let braceDepth = 0;
+
+    for (const line of lines) {
+      if (!inComponent) {
+        const match = line.match(/^component\s+([\w-]+)\s*\(([^)]*)\)\s*\{/);
+        if (match) {
+          inComponent = true;
+          const [, name, props] = match;
+          currentComponent = {
+            name,
+            props: props ? props.split(",").map((p) => p.trim()) : [],
+            body: "",
+          };
+          braceDepth = (line.match(/\{/g) || []).length;
+        }
+      } else {
+        braceDepth += (line.match(/\{/g) || []).length;
+        braceDepth -= (line.match(/\}/g) || []).length;
+
+        if (braceDepth <= 0) {
+          const closingBraceIndex = line.lastIndexOf("}");
+          bodyLines.push(line.substring(0, closingBraceIndex));
+          currentComponent.body = bodyLines.join("\n").trim();
+          this.components[currentComponent.name] = currentComponent;
+
+          inComponent = false;
+          currentComponent = null;
+          bodyLines = [];
+          braceDepth = 0;
+        } else {
+          bodyLines.push(line);
+        }
+      }
+    }
+  }
+  parseJsArguments(argsString) {
+    const args = [];
+    let current = "";
+    let insideString = false;
+    let stringChar = null;
+    let parenDepth = 0;
+
+    for (let i = 0; i < argsString.length; i++) {
+      const char = argsString[i];
+
+      if (!insideString) {
+        if (char === '"' || char === "'") {
+          insideString = true;
+          stringChar = char;
+          current += char;
+        } else if (char === "(") {
+          parenDepth++;
+          current += char;
+        } else if (char === ")") {
+          parenDepth--;
+          current += char;
+        } else if (char === "," && parenDepth === 0) {
+          args.push(this.parseJsArgument(current.trim()));
+          current = "";
+        } else {
+          current += char;
+        }
+      } else {
+        current += char;
+        if (char === stringChar && argsString[i - 1] !== "\\") {
+          insideString = false;
+          stringChar = null;
+        }
+      }
+    }
+
+    if (current.trim()) {
+      args.push(this.parseJsArgument(current.trim()));
+    }
+
+    return args;
+  }
+
+  // Add this method to convert string arguments to proper types
+  parseJsArgument(arg) {
+    arg = arg.trim();
+
+    // Handle quoted strings
+    if (
+      (arg.startsWith('"') && arg.endsWith('"')) ||
+      (arg.startsWith("'") && arg.endsWith("'"))
+    ) {
+      return arg.slice(1, -1); // Remove quotes
+    }
+
+    // Handle numbers
+    if (/^\d+$/.test(arg)) {
+      return parseInt(arg, 10);
+    }
+
+    if (/^\d*\.\d+$/.test(arg)) {
+      return parseFloat(arg);
+    }
+
+    // Handle booleans
+    if (arg === "true") return true;
+    if (arg === "false") return false;
+    if (arg === "null") return null;
+    if (arg === "undefined") return undefined;
+
+    // Return as string for other cases
+    return arg;
+  }
+  // --- NEW: Method to parse attributes from a component tag ---
+  parseComponentAttributes(attrString) {
+    const props = {};
+    const attrRegex = /([\w-]+)(?:=(?:"([^"]*)"|'([^']*)'|([^>\s]+)))?/g;
+    let match;
+    while ((match = attrRegex.exec(attrString)) !== null) {
+      const key = match[1];
+      const value = match[2] ?? match[3] ?? match[4] ?? true; // double-quoted, single-quoted, unquoted, or boolean
+      props[key] = value;
+    }
+    return props;
+  }
+
   parseFile(filename) {
     this.pageName = null;
+    this.components = {}; // Reset components for each new file parse
     const filePath = path.join(this.viewsPath, filename);
     if (!fs.existsSync(filePath)) {
       throw new Error(`Entry file not found: ${filename}`);
@@ -68,11 +213,44 @@ class AnixParser {
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
 
-      // Extract page name from page declaration
+      // Extract page name from page declaration - Updated regex
       if (!this.pageName) {
-        const pageMatch = line.match(/^page\s*\[\s*"([^"]+)"/);
+        const pageMatch = line.match(/^page\s*\[\s*(["'])([^"']+)\1/);
         if (pageMatch) {
-          this.pageName = pageMatch[1];
+          this.pageName = pageMatch[2];
+        }
+      }
+      // --- NEW: Handle component imports ---
+      const importMatch = line.match(this.importRegex);
+      if (importMatch) {
+        this.loadComponentsFromFile(importMatch[2]);
+        continue; // Don't output any HTML for the import line
+      }
+
+      // --- NEW: Handle component usage ---
+      const componentUsageMatch = line.match(/^<([\w-]+)\s*([^>]*?)\s*\/>/);
+      if (componentUsageMatch) {
+        const [, componentName, attrString] = componentUsageMatch;
+        if (this.components[componentName]) {
+          const component = this.components[componentName];
+          const props = this.parseComponentAttributes(attrString);
+          let expandedBody = component.body;
+
+          // Replace placeholders like {{prop}} with provided values
+          for (const propName of component.props) {
+            const value = props[propName] || "";
+            const regex = new RegExp(`{{\\s*${propName}\\s*}}`, "g");
+            expandedBody = expandedBody.replace(regex, value);
+          }
+
+          // Recursively parse the expanded Anix code
+          const expandedHtml = expandedBody
+            .split("\n")
+            .map((l) => this.parseLine(l.trim()))
+            .filter(Boolean)
+            .join("\n");
+          html += expandedHtml + "\n";
+          continue; // Move to the next line
         }
       }
 
@@ -99,7 +277,6 @@ class AnixParser {
           // Collect lines until closing brace
           while (i < lines.length && lines[i].trim() !== "}") {
             preContent += lines[i].replace(/\\n/g, "\n") + "\n";
-
             i++;
           }
 
@@ -324,8 +501,6 @@ class AnixParser {
     }
 
     // Close any remaining open blocks
-    // At the end of the parseFile function...
-
     if (this.openBlocks.length > 0) {
       const openTag = this.openBlocks[this.openBlocks.length - 1];
       throw new Error(
@@ -356,19 +531,59 @@ class AnixParser {
   }
 
   resolveIncludes(content) {
-    return content.replace(this.includeRegex, (match, includeFile) => {
-      const includePath = path.join(this.viewsPath, includeFile);
-      if (fs.existsSync(includePath)) {
-        const includedContent = fs.readFileSync(includePath, "utf-8");
-        return this.resolveIncludes(includedContent);
-      } else {
-        throw new Error(`Include file not found: ${includeFile}`);
-        return "";
+    const lines = content.split("\n");
+    const processedLines = [];
+    let insidePreBlock = false;
+    let preBlockDepth = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+
+      // Check if we're entering a pre block
+      if (trimmedLine.startsWith("pre") && trimmedLine.endsWith("{")) {
+        insidePreBlock = true;
+        preBlockDepth = 1;
+        processedLines.push(line);
+        continue;
       }
-    });
+
+      // If we're inside a pre block, track braces but don't process includes
+      if (insidePreBlock) {
+        preBlockDepth += (line.match(/\{/g) || []).length;
+        preBlockDepth -= (line.match(/\}/g) || []).length;
+
+        if (preBlockDepth <= 0) {
+          insidePreBlock = false;
+          preBlockDepth = 0;
+        }
+
+        processedLines.push(line);
+        continue;
+      }
+
+      // Only process includes if we're not inside a pre block
+      const processedLine = line.replace(
+        this.includeRegex,
+        (match, quote, includeFile) => {
+          const includePath = path.join(this.viewsPath, includeFile);
+          if (fs.existsSync(includePath)) {
+            const includedContent = fs.readFileSync(includePath, "utf-8");
+            return this.resolveIncludes(includedContent);
+          } else {
+            throw new Error(`Include file not found: ${includeFile}`);
+          }
+        }
+      );
+
+      processedLines.push(processedLine);
+    }
+
+    return processedLines.join("\n");
   }
 
   parseLine(line) {
+    // Updated pre tag regex to accept both quote types
     const preTagMatch = line.match(
       /^(pre(?:[.#][\w-]+)*)(?:\s*\{)?\s*(["'])([\s\S]*?)\2\s*$/
     );
@@ -398,30 +613,62 @@ class AnixParser {
     if (!line || this.commentRegex.test(line)) return "";
 
     const importJsMatch = line.match(
-      /^importjs\s+([\w.\/\\-]+)\s*:\s*([\w$]+)\(([^)]*)\);?$/
+      /^importjs\s+(["'])([^"']+)\1\s*:\s*([\w$]+)\(([^)]*)\);?\s*$/
     );
     if (importJsMatch) {
-      const jsPath = importJsMatch[1];
-      const funcName = importJsMatch[2];
-      const rawArgs = importJsMatch[3];
+      const jsPath = importJsMatch[2];
+      const funcName = importJsMatch[3];
+      const rawArgs = importJsMatch[4];
+
       let args = [];
       if (rawArgs.trim()) {
-        args = this.safeSplitAttributes(rawArgs);
+        // Parse arguments more carefully to handle quoted strings
+        args = this.parseJsArguments(rawArgs);
       }
+
+      // Determine the absolute path
       let absPath = jsPath;
+      let possiblePaths = [jsPath];
       if (!path.isAbsolute(jsPath)) {
-        absPath = path.join(process.cwd(), "views", "assets", "js", jsPath);
-        if (!fs.existsSync(absPath)) {
-          absPath = path.join(process.cwd(), jsPath);
+        // Try multiple potential locations
+        const possiblePaths = [
+          path.join(process.cwd(), jsPath.replace(/^\//, "")), // Remove leading slash if present
+          path.join(process.cwd(), "views", jsPath.replace(/^\//, "")),
+          path.join(
+            process.cwd(),
+            "views",
+            "assets",
+            "js",
+            path.basename(jsPath)
+          ),
+          path.join(this.viewsPath, jsPath.replace(/^\//, "")),
+        ];
+
+        for (const testPath of possiblePaths) {
+          if (fs.existsSync(testPath)) {
+            absPath = testPath;
+            break;
+          }
         }
       }
+
       if (!fs.existsSync(absPath)) {
-        throw new Error(`importjs: JavaScript file not found at '${jsPath}'`);
+        throw new Error(
+          `importjs: JavaScript file not found at '${jsPath}'. Searched paths: ${
+            possiblePaths?.join(", ") || jsPath
+          }`
+        );
       }
+
       try {
+        // Clear the module from cache to ensure fresh execution
+        delete require.cache[require.resolve(absPath)];
         const mod = require(absPath);
+
         if (typeof mod[funcName] === "function") {
-          return mod[funcName](...args);
+          const result = mod[funcName](...args);
+          // Return the result as a string (assuming it returns HTML)
+          return typeof result === "string" ? result : String(result);
         } else {
           throw new Error(
             `importjs: Function '${funcName}' not found in ${jsPath}`
@@ -515,11 +762,12 @@ class AnixParser {
       }
     }
 
+    // Updated script src regex to accept both quote types
     const scriptSrcMatch = line.match(
-      /^script\s*\(src\s*[=:]\s*"([^"]+)"\)\s*$/
+      /^script\s*\(src\s*[=:]\s*(["'])([^"']+)\1\)\s*$/
     );
     if (scriptSrcMatch) {
-      return `<script src="${scriptSrcMatch[1]}"></script>`;
+      return `<script src="${scriptSrcMatch[2]}"></script>`;
     }
 
     if (line.match(/^script\s*\{.*\}\s*$/)) {
@@ -551,30 +799,34 @@ class AnixParser {
       const content = specificVoidTagMatch[2];
       return `<${tag}${this.parseVoidTagAttributes(content)}>`;
     }
-    const pageMatch = line.match(/^page\s*\["([^"]+)",\s*"([^"]+)"\]\s*\{/);
+
+    // Updated page match regex to accept both quote types
+    const pageMatch = line.match(
+      /^page\s*\[(["'])([^"']+)\1,\s*(["'])([^"']+)\3\]\s*\{/
+    );
     if (pageMatch) {
-      const title = pageMatch[1];
-      const url = pageMatch[2];
+      const title = pageMatch[2];
+      const url = pageMatch[4];
       this.openBlocks.push("div");
       return `<div data-page="${title}" data-url="${url}">`;
     }
 
+    // Updated inline link regex to accept both quote types
     const inlineLinkMatch = line.match(
-      /^([a-zA-Z0-9]+)((?:\.[\w-]+)+)?\s*"([^"]+)"\s*->\s*"([^"]+)";?$/
+      /^([a-zA-Z0-9]+)((?:\.[\w-]+)+)?\s*(["'])([^"']+)\3\s*->\s*(["'])([^"']+)\5;?$/
     );
     if (inlineLinkMatch) {
       const tag = inlineLinkMatch[1];
       const classes = inlineLinkMatch[2]
         ? inlineLinkMatch[2].substring(1).replace(/\./g, " ")
         : "";
-      const text = inlineLinkMatch[3];
-      const href = inlineLinkMatch[4];
+      const text = inlineLinkMatch[4];
+      const href = inlineLinkMatch[6];
       return `<${tag}${
         classes ? ` class="${classes}"` : ""
       } href="${href}">${text}</${tag}>`;
     }
 
-    // ***** START OF MODIFIED SECTION *****
     // This new helper function will be used by the following regex blocks
     const parseModifiers = (modifiers, tag) => {
       let id = "";
@@ -596,17 +848,17 @@ class AnixParser {
       return { id, classes };
     };
 
-    // MODIFIED REGEX: Captures ID and classes in any order
+    // UPDATED REGEX: Now accepts both single and double quotes for content
     const flexibleTagMatch = line.match(
-      /^([a-zA-Z0-9]+)((?:[.#][\w-]+)*)?(>.*<|\((?:[^()"]+|"[^"]*")*\))?(?:\s*"([^"]*)")?(\s*\{)?;?$/
+      /^([a-zA-Z0-9]+)((?:[.#][\w-]+)*)?(>.*<|\((?:[^()"']+|["'][^"']*["'])*\))?(?:\s*(["'])([^"']*)\4)?(\s*\{)?;?$/
     );
 
     if (flexibleTagMatch) {
       const tag = flexibleTagMatch[1];
       const modifiers = flexibleTagMatch[2] || "";
       let attrContent = flexibleTagMatch[3] || "";
-      const rawContent = flexibleTagMatch[4] || "";
-      const isBlock = !!flexibleTagMatch[5];
+      const rawContent = flexibleTagMatch[5] || "";
+      const isBlock = !!flexibleTagMatch[6];
 
       const { id, classes } = parseModifiers(modifiers, tag);
 
@@ -658,8 +910,11 @@ class AnixParser {
           value = valueParts.join(":").trim();
         }
 
-        // Remove surrounding quotes if present
-        if (value.startsWith('"') && value.endsWith('"')) {
+        // Remove surrounding quotes if present (both single and double)
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
           value = value.slice(1, -1);
         }
 
@@ -687,11 +942,22 @@ class AnixParser {
     const parts = [];
     let current = "";
     let insideQuotes = false;
+    let quoteChar = null;
+
     for (let i = 0; i < content.length; i++) {
       const char = content[i];
-      if (char === '"' && content[i - 1] !== "\\") {
-        insideQuotes = !insideQuotes;
+
+      // Handle quote detection for both single and double quotes
+      if ((char === '"' || char === "'") && content[i - 1] !== "\\") {
+        if (!insideQuotes) {
+          insideQuotes = true;
+          quoteChar = char;
+        } else if (char === quoteChar) {
+          insideQuotes = false;
+          quoteChar = null;
+        }
       }
+
       if (char === "," && !insideQuotes) {
         parts.push(current.trim());
         current = "";

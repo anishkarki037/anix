@@ -60,26 +60,33 @@ function build() {
   const parser = new AnixParser(viewsPath);
   const allFiles = getAllAnixFiles(viewsPath);
 
-  // Step 1: Collect all include targets
-  const includedFiles = new Set();
+  // Step 1: Collect all include and import targets
+  const nonPageFiles = new Set();
+  const includeRegex = /include\s+(["'])(.+?)\1;/g;
+  const importRegex = /^import\s+(['"])(.+?)\1;/gm;
 
   for (const file of allFiles) {
-    const content = fs.readFileSync(path.join(viewsPath, file), "utf-8"); //
+    const content = fs.readFileSync(path.join(viewsPath, file), "utf-8");
     let match;
-    while ((match = parser.includeRegex.exec(content)) !== null) {
-      includedFiles.add(match[1]);
+
+    // Find all included files
+    while ((match = includeRegex.exec(content)) !== null) {
+      nonPageFiles.add(match[2]);
+    }
+    // Find all imported component files
+    while ((match = importRegex.exec(content)) !== null) {
+      nonPageFiles.add(match[2]);
     }
   }
 
-  // Step2: Build only non-included .anix files
+  // Step 2: Build only non-included and non-imported .anix files
   allFiles.forEach((file) => {
-    // If it's the main file, we skip it since it's special and should be handled as index.html
-    if (file === "index.anix" || !includedFiles.has(file)) {
-      // Output path needs to handle subdirectories
+    // If a file is in the nonPageFiles set, it's a partial/component, so we skip it.
+    // The main index.anix is always built.
+    if (file === "index.anix" || !nonPageFiles.has(file)) {
       const outputFile = file.replace(".anix", ".html");
       const outputDir = path.dirname(path.join(distPath, outputFile));
 
-      // Create subdirectory in dist if it doesn't exist
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
       }
@@ -87,6 +94,7 @@ function build() {
       buildPage(file, outputFile);
     }
   });
+
   copyPublicAssets();
 }
 

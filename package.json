@@ -1,7 +1,7 @@
 {
   "name": "anix",
-  "version": "1.0.0",
-  "description": "Anix SPA Compiler",
+  "version": "1.2.1",
+  "description": "Anix Compiler",
   "main": "core/compiler.js",
   "scripts": {
     "build": "node core/compiler.js",
@@ -17,7 +17,7 @@
     "gradient-string": "^3.0.0",
     "socket.io": "^4.8.1"
   },
-  "author": "Your Name",
+  "author": "Anish Karki",
   "license": "MIT",
   "devDependencies": {
     "nodemon": "^3.1.10"

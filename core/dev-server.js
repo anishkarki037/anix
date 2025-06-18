@@ -48,7 +48,7 @@ function parseAnixFile(filename) {
         <title>${parser.pageName || path.basename(filename, ".anix")}</title>
         <link rel="stylesheet" href="./assets/css/style.css" />
         <link rel="stylesheet" href="./assets/css/shorthand.css" />
-        <link rel="stylesheet" href="./assets/css/docs.css" />
+        <link rel="icon" type="image/x-icon" href="./favicon.ico">
         <script src="/socket.io/socket.io.js"></script>
         <script>
           // Live reload script

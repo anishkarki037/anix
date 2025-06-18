@@ -111,6 +111,8 @@ class AnixParser {
     let insideString = false;
     let stringChar = null;
     let parenDepth = 0;
+    let braceDepth = 0;
+    let bracketDepth = 0;
 
     for (let i = 0; i < argsString.length; i++) {
       const char = argsString[i];
@@ -126,7 +128,24 @@ class AnixParser {
         } else if (char === ")") {
           parenDepth--;
           current += char;
-        } else if (char === "," && parenDepth === 0) {
+        } else if (char === "{") {
+          braceDepth++;
+          current += char;
+        } else if (char === "}") {
+          braceDepth--;
+          current += char;
+        } else if (char === "[") {
+          bracketDepth++;
+          current += char;
+        } else if (char === "]") {
+          bracketDepth--;
+          current += char;
+        } else if (
+          char === "," &&
+          parenDepth === 0 &&
+          braceDepth === 0 &&
+          bracketDepth === 0
+        ) {
           args.push(this.parseJsArgument(current.trim()));
           current = "";
         } else {

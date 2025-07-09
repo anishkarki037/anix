@@ -135,6 +135,17 @@ input(type="checkbox", name="terms", checked)
 div(w="100px", h="100px")
 ```
 
+#### Event Handler Shorthand (@)
+For client-side events, you can use the `@` prefix as a shorthand for `on...` attributes.
+
+```anix
+// This:
+button(@click="alert('Clicked!')") "Click Me"
+
+// Is equivalent to this standard HTML:
+<button onclick="alert('Clicked!')">Click Me</button>
+```
+
 ### Nesting
 
 Nest elements using indentation with curly braces `{}`.
@@ -221,14 +232,14 @@ div(class="status-{{ isLoggedIn ? 'active' : 'inactive' }}")
 
 ### Conditional Statements (if/else)
 
-Render content conditionally. You can use `if`, `else if` (`elseif`), and `else`. The `@` prefix (`@if`) is also supported.
+Render content conditionally. You can use `if`, `else if` (or the alias `elseif`), and `else`. The `@` prefix (`@if`, `@elseif`, `@else`) is also supported.
 
 ```anix
 set userRole = "admin"
 
 if userRole == "admin" {
   button "Admin Panel"
-} else if userRole == "editor" {
+} elseif userRole == "editor" {
   button "Edit Content"
 } else {
   p "You are a viewer."
@@ -403,6 +414,10 @@ Anix provides shortcuts for common DOM manipulations and events.
 js:click("#my-button") {
   console.log('Button was clicked!');
 }
+
+// DOM Querying
+js:get("#my-element"); // equivalent to document.querySelector
+js:getAll(".my-class"); // equivalent to document.querySelectorAll
 
 // DOM Manipulation
 js:addClass("#my-div", "active");

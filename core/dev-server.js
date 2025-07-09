@@ -38,6 +38,16 @@ function parseAnixFile(filename) {
   try {
     const htmlContent = parser.parseFile(filename);
 
+    // Generate SEO tags from the parsed data
+    const seoTags = Object.entries(parser.seoData)
+      .map(([key, value]) => {
+        if (key.startsWith("og:")) {
+          return `<meta property="${key}" content="${value}" />`;
+        }
+        return `<meta name="${key}" content="${value}" />`;
+      })
+      .join("\n        ");
+
     // Create a complete HTML document with live reload script
     return `
     <!DOCTYPE html>
@@ -46,6 +56,7 @@ function parseAnixFile(filename) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>${parser.pageName || path.basename(filename, ".anix")}</title>
+        ${seoTags}
         <link rel="stylesheet" href="./assets/css/style.css" />
         <link rel="stylesheet" href="./assets/css/shorthand.css" />
         <link rel="icon" type="image/x-icon" href="./favicon.ico">

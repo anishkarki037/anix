@@ -27,6 +27,16 @@ function buildPage(inputFile, outputFile) {
   const parser = new AnixParser(viewsPath);
   const htmlContent = parser.parseFile(inputFile);
 
+  // Generate SEO tags from the parsed data
+  const seoTags = Object.entries(parser.seoData)
+    .map(([key, value]) => {
+      if (key.startsWith("og:")) {
+        return `<meta property="${key}" content="${value}" />`;
+      }
+      return `<meta name="${key}" content="${value}" />`;
+    })
+    .join("\n      ");
+
   const finalHtml = `
   <!DOCTYPE html>
   <html lang="en">
@@ -34,9 +44,10 @@ function buildPage(inputFile, outputFile) {
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>${parser.pageName || path.basename(inputFile, ".anix")}</title>
+      ${seoTags}
       <link rel="stylesheet" href="./assets/css/style.css" />
       <link rel="stylesheet" href="./assets/css/shorthand.css" />
-       <link rel="icon" type="image/x-icon" href="./favicon.ico">
+      <link rel="icon" type="image/x-icon" href="./favicon.ico">
     </head>
     <body>
       ${htmlContent}

@@ -1,6 +1,6 @@
 # Anix Framework
 
-Anix is a modern, lightweight UI framework and templating engine designed for rapid web application development. It features a simple, readable syntax for building dynamic pages, supports custom JavaScript commands, and integrates easily with backend logic for full-stack projects.
+Anix is a modern, lightweight UI framework and templating engine designed for rapid web application development. It combines a simple, readable templating syntax with powerful features like reusable components, built-in state management, and seamless JavaScript integration, allowing you to build everything from static sites to dynamic, reactive single-page applications.
 
 ---
 
@@ -10,73 +10,80 @@ Anix is a modern, lightweight UI framework and templating engine designed for ra
 - [Features](#features)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
-- [Configuration](#configuration)
 - [Templating Syntax](#templating-syntax)
+  - [Basic Elements](#basic-elements)
+  - [Attributes](#attributes)
+  - [Nesting](#nesting)
+  - [Comments](#comments)
+  - [Special Tags](#special-tags)
+- [Variables & Data](#variables--data)
+  - [Variable Assignment (set)](#variable-assignment-set)
+  - [Variable Interpolation](#variable-interpolation)
+- [Control Flow](#control-flow)
+  - [Conditional Statements (if/else)](#conditional-statements-ifelse)
+  - [Loops (for)](#loops-for)
+- [Reactivity & State Management](#reactivity--state-management)
+  - [State Declaration (state)](#state-declaration-state)
+  - [Computed Properties (computed)](#computed-properties-computed)
+  - [Watchers (watch)](#watchers-watch)
+  - [Reactive Loops (foreach)](#reactive-loops-foreach)
+  - [Conditional Rendering (@show)](#conditional-rendering-show)
+  - [Two-Way Data Binding](#two-way-data-binding)
 - [Components & Includes](#components--includes)
-- [Custom JavaScript Commands](#custom-javascript-commands)
-- [Routing](#routing)
-- [Backend Integration](#backend-integration)
-- [Advanced Usage](#advanced-usage)
-- [Best Practices](#best-practices)
-- [Troubleshooting](#troubleshooting)
-- [FAQ](#faq)
+  - [Includes](#includes)
+  - [Components](#components)
+- [JavaScript Integration](#javascript-integration)
+  - [Client-Side Scripting](#client-side-scripting)
+  - [Custom JavaScript Commands](#custom-javascript-commands)
+  - [Server-Side Scripting (importjs)](#server-side-scripting-importjs)
+- [Routing & Page Definition](#routing--page-definition)
+- [Advanced Features](#advanced-features)
+  - [SEO Blocks](#seo-blocks)
+  - [Template Functions](#template-functions)
 - [License](#license)
 
 ---
 
 ## Philosophy
 
-Anix is designed for developers who want to build web applications quickly, with a focus on readable UI code, rapid prototyping, and seamless backend integration. Its syntax is inspired by modern frontend frameworks but remains simple and approachable. Basically, it's built for rapid development and working with the tools you already Know. If you know how to use HTML and CSS and JS as additional, you can use Anix.
+Anix is designed for developers who want to build web applications quickly, with a focus on readable UI code, rapid prototyping, and seamless backend integration. Its syntax is inspired by modern frontend frameworks but remains simple and approachable. Basically, it's built for rapid development with the tools you already know. If you know HTML, CSS, and JavaScript, you can use Anix.
 
 ---
 
 ## Features
 
-- Intuitive `.anix` file syntax for UI layouts
-- Built-in support for includes and reusable components
-- Custom JavaScript event commands (e.g., `js:click`, `js:ajax`)
-- File-based routing and easy integration with Node.js
-- Rapid prototyping and visual design focus
-- Lightweight, minimal dependencies
-- Easy to extend and customize
+- Intuitive `.anix` file syntax for UI layouts.
+- Powerful reactive state management built-in (`state`, `computed`, `watch`).
+- Reusable components with props.
+- Simple and powerful control flow (`if`, `for`, `foreach`).
+- Custom JavaScript event commands (e.g., `js:click`, `js:submit`).
+- Server-side function execution with `importjs`.
+- File-based routing and easy integration with Node.js.
+- SEO-friendly with dedicated `seo` blocks.
+- Lightweight with minimal dependencies.
 
 ---
 
 ## Installation
 
-1. **Create anix app:**
-   ```bash
-   npx create-anix <your_app_name>
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Start the development server:**
-   ```bash
-   npm start
-   ```
-4. **Open your browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000) (or your configured port).
-5. **Install Anix Extension:**
-   Install the Anix extension in your code editor to get syntax highlighting and auto-completion for .anix files.
-   To install the extension:
-
-- For VS Code: Open the Extensions panel
-- Go to three dot menu in top right of extenstion panel
-- Select install from VSIX,Locate the anix.vsix extension in root folder of your anix project and click Install
-
-6. **Snippets:**
-
-- Install thecode snippets in your VSCode snippets directory
-- File: anix.code-snippets
-- step1: open command palette (Ctrl+Shift+P)
-- step2: type "snippets" and select "Preferences: Configure
-- User Snippets"=
-- step3: select "New Global Snippets file"
-- step4: name the file "anix.code-snippets"
-- step5: copy the code from "anix.code-snippets" file in root directory of your anix project and paste it into the new file
-- step6: save the file
+1.  **Create an Anix app:**
+    ```bash
+    npx create-anix <your_app_name>
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Start the development server:**
+    ```bash
+    npm start
+    ```
+4.  **Open your browser:**
+    Navigate to `http://localhost:3000` (or your configured port).
+5.  **Install Anix Extension:**
+    Install the Anix extension for syntax highlighting and auto-completion. The `anix.vsix` file is included in your project's root directory.
+6.  **Install Snippets:**
+    Copy the contents of `anix.code-snippets` into your editor's user snippets file for helpful shortcuts.
 
 ---
 
@@ -84,183 +91,401 @@ Anix is designed for developers who want to build web applications quickly, with
 
 ```
 ├── views/            # UI templates (.anix files)
+│   ├── components/   # Reusable components
+│   └── assets/       # CSS, JS, images
 ├── core/
 │   ├── parser.js     # Anix parser and renderer
-│   ├── compiler.js   # Compilation logic
-│   └── dev-server.js # Development server
-├── backend/           # Astpoint powered backend
-├── package.json      # Project metadata and dependencies
-└── README.md         # Project documentation
-└── anix.code-snippets # Code snippets for VSCode
-└── anix.vsix           # Anix extension for VSCode
+│   └── ...
+├── backend/          # Backend logic (e.g., Astpoint)
+├── package.json      # Project dependencies
+└── README.md         # This file
 ```
-
----
-
-## Configuration
-
-- **Parser Configuration:**
-  - Located in `parser.config.json` (if present)
-  - Controls parsing options, custom commands, and extensions
-- **Environment Variables:**
-  - Set `PORT` to change the dev server port
-  - Use `.env` for custom environment variables
 
 ---
 
 ## Templating Syntax
 
-Anix uses a concise, block-based syntax for defining UI layouts:
+### Basic Elements
+
+Create HTML elements using their tag name. Add CSS classes with `.` and an ID with `#`.
 
 ```anix
-page ["Home", "/"] {
-  include "navbar.anix";
-  div.container {
-    h1 "Welcome to Anix!"
-    p "This is a sample page."
-    button.btn "Click Me"
+// A simple div
+div
+
+// A paragraph with a class and an ID
+p.intro#first-paragraph
+
+// An h1 tag with text content
+h1 "Welcome to Anix!"
+```
+
+### Attributes
+
+Provide attributes inside parentheses `()` using comma-separated key-value pairs. You can use shorthands like `w` for `width` and `h` for `height`.
+
+```anix
+// Standard attributes
+img(src="/images/logo.png", alt="Anix Logo")
+
+// Boolean attributes
+input(type="checkbox", name="terms", checked)
+
+// Shorthand attributes
+div(w="100px", h="100px")
+```
+
+### Nesting
+
+Nest elements using indentation with curly braces `{}`.
+
+```anix
+div.container {
+  h1 "Page Title"
+  p {
+    span "This is a nested element."
   }
 }
 ```
 
-- **Elements:** Use tag names (`div`, `h1`, etc.) followed by classes/IDs as needed.
-- **Text Content:** Place text in quotes after the tag.
-- **Attributes:** Use `attr:value` inside the element block.
-- **Nesting:** Indent or use braces `{}` for child elements.
+### Comments
 
-### Example: Form with Events
+Use `//`, `#`, or `###` for single-line comments. They are ignored by the parser.
 
 ```anix
-form#login-form {
-  input[type="text" name="username"]
-  input[type="password" name="password"]
-  button.btn[type="submit"] "Login"
+// This is a comment.
+# This is also a comment.
+h1 "This will be rendered"
+```
+
+### Special Tags
+
+-   **Links:** Use the `->` syntax for quick links, or standard `href` attributes.
+    ```anix
+    a "Go to About" -> "/about"
+    // is equivalent to:
+    a(href="/about") "Go to About"
+    ```
+-   **Preformatted Text:** Use the `pre` tag to preserve whitespace and line breaks.
+    ```anix
+    pre {
+      const greet = () => {
+        console.log("Hello, Anix!");
+      };
+    }
+    // or for a single line
+    pre 'This is preformatted text.'
+    ```
+
+---
+
+## Variables & Data
+
+### Variable Assignment (set)
+
+Define variables directly in your template. Anix supports strings, numbers, booleans, arrays, and objects.
+
+```anix
+// Single-line assignment
+set pageTitle = "My Awesome Site"
+set userCount = 50
+set isLoggedIn = true
+set theme = { primary: 'blue', secondary: 'green' }
+
+// Multi-line assignment for objects/arrays
+set user = {
+  name: "Alex",
+  roles: [
+    "admin",
+    "editor"
+  ]
 }
-js:submit("#login-form") {
-  // Custom JS logic here
-  alert('Form submitted!');
+```
+
+### Variable Interpolation
+
+Use `{{ }}` to display variable values in your text content and attributes. Anix can evaluate JavaScript expressions within the braces.
+
+```anix
+set user = { name: 'Bob', score: 42 }
+
+h1 "Welcome, {{ user.name }}!"
+p "Your score is {{ user.score * 2 }}."
+
+div(class="status-{{ isLoggedIn ? 'active' : 'inactive' }}")
+```
+
+---
+
+## Control Flow
+
+### Conditional Statements (if/else)
+
+Render content conditionally. You can use `if`, `else if` (`elseif`), and `else`. The `@` prefix (`@if`) is also supported.
+
+```anix
+set userRole = "admin"
+
+if userRole == "admin" {
+  button "Admin Panel"
+} else if userRole == "editor" {
+  button "Edit Content"
+} else {
+  p "You are a viewer."
 }
+```
+
+### Loops (for)
+
+Iterate over arrays defined with `set`. Inside the loop, you get access to helper variables like `item_index`, `item_first`, and `item_last`.
+
+```anix
+set products = ["Laptop", "Mouse", "Keyboard"]
+
+ul {
+  for product in products {
+    li "Product #{{ product_index }}: {{ product }}"
+  }
+}
+```
+
+---
+
+## Reactivity & State Management
+
+Anix includes a powerful reactivity system for building dynamic user interfaces.
+
+### State Declaration (state)
+
+Declare a reactive state variable. When its value changes, the UI will automatically update.
+
+```anix
+state counter = 0
+```
+
+### Computed Properties (computed)
+
+Create a new state variable that is derived from other state variables. It will automatically re-evaluate when its dependencies change.
+
+```anix
+state price = 10
+state quantity = 2
+computed total = price * quantity // total is now 20 and reactive
+```
+
+### Watchers (watch)
+
+Execute JavaScript code whenever a state variable changes.
+
+```anix
+state name = "Guest"
+
+watch name {
+  // 'newValue' and 'oldValue' are implicitly available
+  console.log('Name changed from ' + oldValue + ' to ' + newValue);
+}
+```
+
+### Reactive Loops (foreach)
+
+Use `foreach` to create a list that automatically updates when the source array (which must be a `state` variable) is modified.
+
+```anix
+state todos = [ {text: 'Learn Anix'}, {text: 'Build something cool'} ]
+
+ul {
+  foreach todo in todos {
+    li "{{ todo.text }}"
+  }
+}
+```
+
+### Conditional Rendering (@show)
+
+Show or hide an element based on a reactive expression.
+
+```anix
+state showDetails = false
+
+// The div will have the 'hidden' attribute until showDetails is true
+div(@show={ showDetails }) {
+  p "Here are the secret details!"
+}
+```
+
+### Two-Way Data Binding
+
+Anix creates a link between state and form inputs.
+
+```anix
+state username = "Alex"
+
+// The input's value will update when 'username' changes,
+// and 'username' will update when the user types in the input.
+input(type="text", data-state-bind="username")
+
+// Display the state
+p "Hello, {{ username }}!"
 ```
 
 ---
 
 ## Components & Includes
 
-- **Includes:**
-  - Use `include "filename.anix";` to insert reusable UI blocks.
-- **Components:**
-  - Create files in `views/components/` and include them as needed.
-  - Pass data via custom attributes or context (see advanced usage).
+### Includes
 
-### Example: Navbar Component
+Use `include` to insert another `.anix` file. This is useful for static, reusable parts of the UI like headers and footers.
 
-`views/components/navbar.anix`:
-
+`views/components/footer.anix`:
 ```anix
-div.navbar {
-  a "About" -> "/about"
-   **or**
-  a(href="./about") "About"
-  nav.links {
-    a "About" -> "/about"
-    a "Docs" -> "/docs"
-  }
-}
+footer "Copyright 2025"
 ```
 
 Usage in a page:
+```anix
+div.page-wrapper {
+  h1 "Main Content"
+  include "components/footer.anix";
+}
+```
+
+### Components
+
+For more complex, reusable UI with logic, use components.
+
+1.  **Import a component file:**
+    `import "./components.anix";`
+
+2.  **Define the component in `components.anix`:**
+    ```anix
+    // A component takes props (arguments)
+    component user-card(name, email) {
+      div.card {
+        h3 "{{ name }}"
+        p "Email: {{ email }}"
+      }
+    }
+    ```
+
+3.  **Use the component in your page:**
+    ```anix
+    // Pass props like HTML attributes
+    <user-card name="Alice" email="alice@example.com" />
+    ```
+
+---
+
+## JavaScript Integration
+
+### Client-Side Scripting
+
+Embed JavaScript directly into your pages.
 
 ```anix
-include "components/navbar.anix";
+// Simple one-liner
+script: alert('Page loaded!')
+
+// Multi-line block
+script {
+  console.log('This runs on the client.');
+}
+
+// Including an external script
+script(src="/assets/js/main.js")
+```
+
+### Custom JavaScript Commands
+
+Anix provides shortcuts for common DOM manipulations and events.
+
+```anix
+// Event Handlers (click, hover, submit, change, etc.)
+js:click("#my-button") {
+  console.log('Button was clicked!');
+}
+
+// DOM Manipulation
+js:addClass("#my-div", "active");
+js:toggle(".modal", "is-visible");
+
+// Timers
+js:wait("500ms") {
+  console.log('This appears after a delay.');
+}
+
+// AJAX
+js:ajax("/api/data", { method: 'POST' });
+```
+
+### Server-Side Scripting (importjs)
+
+Execute a Node.js function during the parsing process and inject its return value (e.g., HTML) directly into the page.
+
+`backend/utils.js`:
+```javascript
+module.exports = {
+  generateUserList: (users) => {
+    return users.map(user => `<li>${user}</li>`).join('');
+  }
+};
+```
+
+Anix file:
+```anix
+ul {
+  // Calls the function and injects the returned HTML
+  importjs "./backend/utils.js": generateUserList(['Alice', 'Bob']);
+}
 ```
 
 ---
 
-## Custom JavaScript Commands
+## Routing & Page Definition
 
-- **Event Binding:**
-  - Use `js:click(".selector") { ... }` to bind JS to UI events.
-- **AJAX Example:**
-  ```anix
-  js:click("#load-btn") {
-    fetch('/api/data').then(r => r.json()).then(data => {
-      console.log(data);
-    });
-  }
-  ```
-- **Multiple Events:**
-  - You can define multiple `js:` blocks per page/component.
+Define your page metadata and URL route at the top of your file. This is used by the Anix dev server for file-based routing.
+
+```anix
+page ["Page Title", "/url-slug"] {
+  // Rest of your page content
+  h1 "This is the Home Page"
+}
+```
 
 ---
 
-## Routing
+## Advanced Features
 
-- **File-based Routing:**
-  - Each `.anix` file in `views/` defines a route.
-  - The page declaration: `page ["Title", "/route"] { ... }`
-- **Dynamic Routes:**
-  - Use parameters in the route string (e.g., `/user/:id`)
+### SEO Blocks
 
----
+Define metadata for search engine optimization in a dedicated `seo` block.
 
-## Backend Integration
+```anix
+seo {
+  title: "My Awesome Anix Page";
+  description: "Learn all about the Anix framework here.";
+  "og:image": "[https://example.com/image.png](https://example.com/image.png)";
+}
 
-- **Node.js Integration:**
-  - Use Anix as a view layer in your Node.js app.
-  - Render `.anix` files server-side or serve static HTML.
-- **API Calls:**
-  - Use `fetch` or AJAX in `js:` blocks to communicate with backend APIs.
+page ["Home", "/"] { ... }
+```
 
----
+### Template Functions
 
-## Advanced Usage
+Create a `templates.js` file with functions that return HTML, and call them from your Anix files.
 
-- **Custom Commands:**
-  - Extend the parser with your own commands in `parser.config.json`.
-- **Theming:**
-  - Use CSS in `views/assets/` or inline `<style>` blocks.
-- **State Management:**
-  - Pass data from backend to templates via context variables.
+`views/assets/js/templates.js`:
+```javascript
+module.exports = {
+  year: () => new Date().getFullYear(),
+  copyright: () => `<footer>Copyright {{ year }}</footer>`
+};
+```
 
----
-
-## Best Practices
-
-- Organize components in `views/components/`
-- Use includes for repeated UI blocks
-- Keep JS logic in `js:` blocks minimal; delegate complex logic to external scripts
-- Use semantic HTML tags for accessibility
-- Document custom commands in your project
-
----
-
-## Troubleshooting
-
-- **Server not starting:**
-  - Check Node.js version (>=14 recommended)
-  - Ensure dependencies are installed (`npm install`)
-- **Page not rendering:**
-  - Check for syntax errors in `.anix` files
-  - Review console output for error messages
-- **Custom JS not working:**
-  - Ensure selectors match rendered HTML
-  - Check browser console for JS errors
-
----
-
-## FAQ
-
-**Q: Can I use Anix with Express or other Node.js frameworks?**
-A: Yes! Use Anix as a view engine or static site generator.
-
-**Q: How do I add global CSS or JS?**
-A: Place files in `views/assets/` and reference them in your templates or HTML head.
-
-**Q: How do I pass data from backend to templates?**
-A: Use context variables when rendering pages (see backend integration section).
-
-**Q: Can I use TypeScript?**
-A: Yes, but you may need to adjust build scripts and parser config manually, but honestly we would not recommend it now in this release.
+Anix file:
+```anix
+// This will execute the copyright() function and render its output.
+{{ copyright }}
+```
 
 ---
 
@@ -268,6 +493,4 @@ A: Yes, but you may need to adjust build scripts and parser config manually, but
 
 MIT
 
-## Use how ever the fuck you like.
-
-## Help us make this better. We beleive in open source.
+Use how ever the f\*ck you like. Help us make this better. We believe in open source.

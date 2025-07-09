@@ -126,13 +126,13 @@ Provide attributes inside parentheses `()` using comma-separated key-value pairs
 
 ```anix
 // Standard attributes
-img(src="/images/logo.png", alt="Anix Logo")
+img(src="/images/logo.png", alt="Anix Logo", w=200)
 
 // Boolean attributes
 input(type="checkbox", name="terms", checked)
 
 // Shorthand attributes
-div(w="100px", h="100px")
+div(w=100, h=100)
 ```
 
 #### Event Handler Shorthand (@)

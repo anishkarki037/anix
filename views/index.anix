@@ -3,7 +3,7 @@ page ["Home", "/"] {
   div.d-flex.flex-col.jc-center.ai-center.h-screen.gap-8.bg-dark.txt-mono {
     
     div.logo.animate-jello{
-  img(src="./assets/img/Anix.svg", alt="Anix Logo",w:800px);
+  img(src="./assets/img/Anix.svg", alt="Anix Logo",w=800px);
     }
    div.buttons.fs-lg{
       a.btn.btn-secondary.frosted.clr-white.hover-jello "Github" -> "https://github.com/anishkarki037/anix";

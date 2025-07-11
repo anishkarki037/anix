@@ -7,7 +7,6 @@ const { copyPublicAssets } = require("./fileHandler");
 const viewsPath = path.join(__dirname, "..", "views");
 const distPath = path.join(__dirname, "..", "dist");
 
-// Add this helper function at the top of compiler.js
 function getAllAnixFiles(dirPath, relativeTo = dirPath) {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
   const files = entries.flatMap((entry) => {
@@ -20,7 +19,7 @@ function getAllAnixFiles(dirPath, relativeTo = dirPath) {
     }
     return [];
   });
-  return files.map((file) => file.replace(/\\/g, "/")); // Normalize paths for consistency
+  return files.map((file) => file.replace(/\\/g, "/"));
 }
 
 function buildPage(inputFile, outputFile) {
@@ -86,14 +85,13 @@ function build() {
     }
     // Find all imported component files
     while ((match = importRegex.exec(content)) !== null) {
-      nonPageFiles.add(match[2]);
+      const normalizedPath = match[2].replace(/^\.\//, "");
+      nonPageFiles.add(normalizedPath);
     }
   }
 
   // Step 2: Build only non-included and non-imported .anix files
   allFiles.forEach((file) => {
-    // If a file is in the nonPageFiles set, it's a partial/component, so we skip it.
-    // The main index.anix is always built.
     if (file === "index.anix" || !nonPageFiles.has(file)) {
       const outputFile = file.replace(".anix", ".html");
       const outputDir = path.dirname(path.join(distPath, outputFile));

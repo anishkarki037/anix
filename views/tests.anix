@@ -1,0 +1,1 @@
+button(@click="alert('The button was clicked!')") "Click Me"

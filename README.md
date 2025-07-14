@@ -508,4 +508,4 @@ Anix file:
 
 MIT
 
-Use how ever the f\*ck you like. Help us make this better. We believe in open source.
+Use how ever the f\*ck you like. Help us make this better. We believe in open source. Lets Make Coding Fun
